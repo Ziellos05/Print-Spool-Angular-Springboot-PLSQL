@@ -38,24 +38,24 @@ public class StratumController {
 	}
 	
 	@GetMapping
-	private ResponseEntity<List<Stratum>> getAllStratum (@RequestBody Stratum stratum) {
+	private ResponseEntity<List<Stratum>> getAllStratum () {
 		return ResponseEntity.ok(stratumService.getAllStratum());
 	}
 	
-	@GetMapping("/{id}")
-	private ResponseEntity<Optional<Stratum>> getStratum (@PathVariable Long id) {
-		return ResponseEntity.ok(stratumService.getStratum(id));
+	@GetMapping("/{stratumId}")
+	private ResponseEntity<Optional<Stratum>> getStratum (@PathVariable Long stratumId) {
+		return ResponseEntity.ok(stratumService.getStratum(stratumId));
 	}
 	
-	@DeleteMapping("/{id}")
-	private ResponseEntity<Void> deleteStratum (@PathVariable Long id) {
-		stratumService.delete(id);
+	@DeleteMapping("/{stratumId}")
+	private ResponseEntity<Void> deleteStratum (@PathVariable Long stratumId) {
+		stratumService.delete(stratumId);
 		return ResponseEntity.ok().build();
 	}
 	
-	@PutMapping("/{id}")
-	private ResponseEntity<Stratum> updateStratum (@RequestBody Stratum stratum, @PathVariable Long id) {
-		stratum.setId(id);
+	@PutMapping("/{stratumId}")
+	private ResponseEntity<Stratum> updateStratum (@RequestBody Stratum stratum, @PathVariable Long stratumId) {
+		stratum.setId(stratumId);
 		Stratum temp = stratumService.create(stratum);
 		try {
 			return ResponseEntity.created(new URI("/api/stratum"+temp.getId())).body(temp);

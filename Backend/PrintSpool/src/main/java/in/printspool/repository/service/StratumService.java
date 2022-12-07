@@ -24,7 +24,7 @@ public class StratumService {
 	}
 	
 	public void delete (Long id) {
-		stratumRepository.deleteById(id);
+		stratumRepository.deleteStratum(id);
 	}
 	
 	public Optional<Stratum> getStratum (Long id) {

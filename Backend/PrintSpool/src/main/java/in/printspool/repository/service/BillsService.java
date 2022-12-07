@@ -1,4 +1,4 @@
-package in.printspool.dao;
+package in.printspool.repository.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import in.printspool.repository.BillsRepository;
+
 @Repository
-public class BillsDAOImp implements BillsDAO {
+public class BillsService implements BillsRepository {
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;

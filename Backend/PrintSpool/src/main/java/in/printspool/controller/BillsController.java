@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import in.printspool.dao.BillsDAO;
+import in.printspool.repository.BillsRepository;
 
 @RestController
 public class BillsController {
 
 	@Autowired
-	private BillsDAO eDAO;
+	private BillsRepository eDAO;
 	
 	@PostMapping("/api/bills")
 	public String saveBills() {
