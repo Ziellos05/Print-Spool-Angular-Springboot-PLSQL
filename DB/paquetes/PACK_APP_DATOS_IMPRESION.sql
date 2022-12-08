@@ -30,7 +30,7 @@ BEGIN
 	st := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
 	av := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
 	IF MOD(st, 2) = 0 THEN
-		av := ABS(av-300);
+		av := ABS(av-999);
 	END IF;
 	avV := TO_CHAR(av);
 	IF LENGTH(avV) = 1 THEN

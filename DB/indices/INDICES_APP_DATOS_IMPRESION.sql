@@ -1,21 +1,19 @@
--- Selección de índices para el acceso a la información a través de la DB
-
--- Tabla de estratos
+-- Index para estratos
 
 CREATE INDEX STRATUMS_ID_IDX ON APP_DATOS_IMPRESION.STRATUMS (ID);
 
--- Tabla de clientes
+-- Index para clientes
 
 CREATE INDEX CLIENTS_ID_IDX ON APP_DATOS_IMPRESION.CLIENTS (ID);
 
--- Tabla de periodos
+-- Index para periodos
 
 CREATE INDEX PERIOD_MONTH_YEAR_IDX ON APP_DATOS_IMPRESION.PERIODS (MONTH_YEAR);
 
--- Tabla de consumos
+-- Index para consumos
 
 CREATE INDEX CONSUMPTIONS_ID_IDX ON APP_DATOS_IMPRESION.CONSUMPTIONS (ID);
 
--- Tabla de facturas
+-- Index para facturas
 
 CREATE INDEX BILLS_ID_IDX ON APP_DATOS_IMPRESION.BILLS (ID);

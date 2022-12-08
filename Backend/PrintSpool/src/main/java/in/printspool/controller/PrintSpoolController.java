@@ -1,6 +1,5 @@
 package in.printspool.controller;
 
-import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +51,7 @@ public class PrintSpoolController {
 		        for (JsonNode jsonNode : root) {
 		            if (jsonNode instanceof ObjectNode) {
 		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("stratum");
-		                edit.remove("avgConsumption");
+		                edit.remove("last");
 		            }
 		        }
 		        String jsonFinal = objectMapper.writeValueAsString(root);
@@ -76,8 +74,7 @@ public class PrintSpoolController {
 		        for (JsonNode jsonNode : root) {
 		            if (jsonNode instanceof ObjectNode) {
 		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("stratum");
-		                edit.remove("last");
+		                edit.remove("avgConsumption");
 		            }
 		        }
 		        String jsonFinal = objectMapper.writeValueAsString(root);
@@ -100,8 +97,7 @@ public class PrintSpoolController {
 		        for (JsonNode jsonNode : root) {
 		            if (jsonNode instanceof ObjectNode) {
 		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("avgConsumption");
-		                edit.remove("last");
+		                edit.remove("stratum");
 		            }
 		        }
 		        String jsonFinal = objectMapper.writeValueAsString(root);
@@ -124,7 +120,8 @@ public class PrintSpoolController {
 		        for (JsonNode jsonNode : root) {
 		            if (jsonNode instanceof ObjectNode) {
 		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("stratum");
+		                edit.remove("avgConsumption");
+		                edit.remove("last");
 		            }
 		        }
 		        String jsonFinal = objectMapper.writeValueAsString(root);
@@ -147,7 +144,8 @@ public class PrintSpoolController {
 		        for (JsonNode jsonNode : root) {
 		            if (jsonNode instanceof ObjectNode) {
 		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("avgConsumption");
+		                edit.remove("stratum");
+		                edit.remove("last");
 		            }
 		        }
 		        String jsonFinal = objectMapper.writeValueAsString(root);
@@ -170,7 +168,8 @@ public class PrintSpoolController {
 		        for (JsonNode jsonNode : root) {
 		            if (jsonNode instanceof ObjectNode) {
 		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("last");
+		                edit.remove("avgConsumption");
+		                edit.remove("stratum");
 		            }
 		        }
 		        String jsonFinal = objectMapper.writeValueAsString(root);
