@@ -2,14 +2,14 @@
 
 -- Ejemplo de la generación de la facturación para un mes escogido
 BEGIN
-  print_spool.spool_gen('01/2022'); 
+  print_spool.spool_gen('12/2022'); 
 END;
 
 -- Ejemplo del calculador del delivery rate
 DECLARE
    a NUMBER;
 BEGIN
-   a := print_spool.del_rate('Crr 3 Av 4'); 
+   a := print_spool.del_rate('Av 400 Av 900 12'); 
    dbms_output.put_line(' El rate de delivery es: ' || a); 
 END;
 
@@ -54,5 +54,5 @@ INNER JOIN APP_DATOS_IMPRESION.CLIENTS c
 ON c.ID = c2.CLIENT_ID
 INNER JOIN APP_DATOS_IMPRESION.PERIODS p 
 ON p.ID = c2.PERIOD_ID
-WHERE p.MONTH_YEAR = '12/2022'
+WHERE p.MONTH_YEAR = '01/2022'
 ORDER BY b.DELIVERY_RATE;

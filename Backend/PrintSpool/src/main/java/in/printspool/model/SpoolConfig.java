@@ -1,5 +1,7 @@
 package in.printspool.model;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SpoolConfig {
 	
+	@NotNull
 	private String date;
 	private boolean stratum;
 	private boolean avgConsumption;

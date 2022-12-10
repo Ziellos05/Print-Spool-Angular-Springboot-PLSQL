@@ -20,49 +20,77 @@ import in.printspool.model.Stratum;
 import in.printspool.repository.service.StratumService;
 
 @RestController
-@RequestMapping("/api/stratum")
+@RequestMapping("/stratum")
 public class StratumController {
 
 	@Autowired
 	private StratumService stratumService;
 	
-	@PostMapping
-	private ResponseEntity<Stratum> saveStratum (@RequestBody Stratum stratum) {
-		Stratum temp = stratumService.create(stratum);
+	@GetMapping
+	private ResponseEntity<List<Stratum>> getAllStratum () {
 		try {
-			return ResponseEntity.created(new URI("/api/stratum"+temp.getId())).body(temp);
+			return ResponseEntity.ok(stratumService.getAllStratum());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
-		
-	}
-	
-	@GetMapping
-	private ResponseEntity<List<Stratum>> getAllStratum () {
-		return ResponseEntity.ok(stratumService.getAllStratum());
 	}
 	
 	@GetMapping("/{stratumId}")
 	private ResponseEntity<Optional<Stratum>> getStratum (@PathVariable Long stratumId) {
-		return ResponseEntity.ok(stratumService.getStratum(stratumId));
-	}
-	
-	@DeleteMapping("/{stratumId}")
-	private ResponseEntity<Void> deleteStratum (@PathVariable Long stratumId) {
-		stratumService.delete(stratumId);
-		return ResponseEntity.ok().build();
-	}
-	
-	@PutMapping("/{stratumId}")
-	private ResponseEntity<Stratum> updateStratum (@RequestBody Stratum stratum, @PathVariable Long stratumId) {
-		stratum.setId(stratumId);
-		Stratum temp = stratumService.create(stratum);
 		try {
+			if (stratumService.getStratum(stratumId).isEmpty()) {
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+			}
+			return ResponseEntity.ok(stratumService.getStratum(stratumId));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+	}
+	
+	@PostMapping
+	private ResponseEntity<Stratum> saveStratum (@RequestBody Stratum stratum) {
+		try {
+			if (!stratumService.getStratum(stratum.getId()).isEmpty()) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).build();
+			}
+			Stratum temp = stratumService.create(stratum);
 			return ResponseEntity.created(new URI("/api/stratum"+temp.getId())).body(temp);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 		
 	}
+	
+	@PutMapping("/{stratumId}")
+	private ResponseEntity<Stratum> updateStratum (@RequestBody Stratum stratum, @PathVariable Long stratumId) {		
+		try {
+			if (stratumService.getStratum(stratumId).isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			}
+			stratum.setId(stratumId);
+			Stratum temp = stratumService.create(stratum);
+			return ResponseEntity.created(new URI("/api/stratum"+temp.getId())).body(temp);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
+	}
+	
+	@DeleteMapping("/{stratumId}")
+	private ResponseEntity<String> deleteStratum (@PathVariable Long stratumId) {
+		try {
+			if (stratumId < 7) {
+				return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Es prohibido eliminar el estrato "+stratumId);
+			} else if (stratumService.getStratum(stratumId).isEmpty()) {
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Este estrato no existe :)");
+			}
+			stratumService.delete(stratumId);
+			return ResponseEntity.ok("El estrato "+stratumId+" ha sido eliminado");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+
+	}
+
 	
 }

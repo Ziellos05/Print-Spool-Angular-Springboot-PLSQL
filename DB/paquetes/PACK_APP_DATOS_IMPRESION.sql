@@ -27,8 +27,13 @@ IS
 	avV VARCHAR2(100);
     rate NUMBER;
 BEGIN 
-	st := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
-	av := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
+	IF REGEXP_SUBSTR(address, '[^ ]+', 1, 1) = 'St' THEN
+		st := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
+		av := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
+	ELSE
+		av := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
+		st := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
+	END IF;
 	IF MOD(st, 2) = 0 THEN
 		av := ABS(av-999);
 	END IF;

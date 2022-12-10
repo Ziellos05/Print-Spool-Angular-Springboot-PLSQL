@@ -23,189 +23,158 @@ public class PrintSpoolController {
 
 	@Autowired
 	private PrintSpoolRepository printSpoolRepository;
-	
-	@GetMapping(value="/api/spool")
-	public ResponseEntity<byte[]> getPrintSpool(@RequestBody SpoolConfig spoolConfig) {
+
+	@GetMapping(value = "/spool")
+	public ResponseEntity<byte[]> getPrintSpool(@RequestBody SpoolConfig spoolConfig, PrintSpool printSpoolSchema) {
 		SpoolConfig x = spoolConfig;
-		if (x.isStratum() && x.isAvgConsumption() && x.isLastConsumption()) {
-			try {
-				
+		if (spoolConfig.getNConsumptions() == 0) {
+			spoolConfig.setNConsumptions(1);
+		}
+		try {
+			if (x.isStratum() && x.isAvgConsumption() && x.isLastConsumption()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSAL(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
-				
+
 				return new ResponseEntity<byte[]>(jsonByte, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
-			
-		} else if (x.isStratum() && x.isAvgConsumption()) {
-			try {
-				
+
+			} else if (x.isStratum() && x.isAvgConsumption()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSA(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("last");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
-				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("last");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
 
-		} else if (x.isStratum() && x.isLastConsumption()) {
-			try {
-				
+				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
+
+			} else if (x.isStratum() && x.isLastConsumption()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSL(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("avgConsumption");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
-				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("avgConsumption");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
 
-		} else if (x.isAvgConsumption() && x.isLastConsumption()) {
-			try {
-				
+				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
+
+			} else if (x.isAvgConsumption() && x.isLastConsumption()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolAL(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("stratum");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
-				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("stratum");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
 
-		} else if (x.isStratum()) {
-			try {
-				
+				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
+
+			} else if (x.isStratum()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolS(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("avgConsumption");
-		                edit.remove("last");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
-				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("avgConsumption");
+						edit.remove("last");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
 
-		} else if (x.isAvgConsumption()) {
-			try {
-				
+				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
+
+			} else if (x.isAvgConsumption()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolA(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("stratum");
-		                edit.remove("last");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
-				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("stratum");
+						edit.remove("last");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
 
-		} else if (x.isLastConsumption()) {
-			try {
-				
+				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
+
+			} else if (x.isLastConsumption()) {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolL(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("avgConsumption");
-		                edit.remove("stratum");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
-				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("avgConsumption");
+						edit.remove("stratum");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
 
-		} else {
-			try {
-				
+				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
+
+			} else {
+
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpool(spoolConfig);
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(printSpool);
 				byte[] jsonByte = json.getBytes();
 				JsonNode root = objectMapper.readTree(jsonByte);
-		        for (JsonNode jsonNode : root) {
-		            if (jsonNode instanceof ObjectNode) {
-		                ObjectNode edit = (ObjectNode) jsonNode;
-		                edit.remove("stratum");
-		                edit.remove("avgConsumption");
-		                edit.remove("last");
-		            }
-		        }
-		        String jsonFinal = objectMapper.writeValueAsString(root);
-		        byte[] jsonByteFinal = jsonFinal.getBytes();
-				
-				
+				for (JsonNode jsonNode : root) {
+					if (jsonNode instanceof ObjectNode) {
+						ObjectNode edit = (ObjectNode) jsonNode;
+						edit.remove("stratum");
+						edit.remove("avgConsumption");
+						edit.remove("last");
+					}
+				}
+				String jsonFinal = objectMapper.writeValueAsString(root);
+				byte[] jsonByteFinal = jsonFinal.getBytes();
+
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
 			}
 
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
 }
