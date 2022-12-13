@@ -1,6 +1,6 @@
 -- Agregando consumos para los clientes durante los periodos establecidos
 
-INSERT ALL 
+INSERT ALL
      into APP_DATOS_IMPRESION.CONSUMPTIONS (ID, CUBIC_METERS, CLIENT_ID, PERIOD_ID) values (1, 21.758, 1, 1)
      into APP_DATOS_IMPRESION.CONSUMPTIONS (ID, CUBIC_METERS, CLIENT_ID, PERIOD_ID) values (2, 8.68, 2, 1)
      into APP_DATOS_IMPRESION.CONSUMPTIONS (ID, CUBIC_METERS, CLIENT_ID, PERIOD_ID) values (3, 5.712, 3, 1)

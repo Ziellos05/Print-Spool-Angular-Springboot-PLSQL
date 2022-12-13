@@ -8,6 +8,9 @@ CREATE INDEX CLIENTS_ID_IDX ON APP_DATOS_IMPRESION.CLIENTS (ID);
 
 -- Index para periodos
 
+/* Se elige el mes_año porque se necesita para seleccionar los consumos a facturar y es un índice que permite 
+ * acceder de forma más rápida y óptima a estos a través de otras tablas usando joins */
+
 CREATE INDEX PERIOD_MONTH_YEAR_IDX ON APP_DATOS_IMPRESION.PERIODS (MONTH_YEAR);
 
 -- Index para consumos

@@ -1,5 +1,6 @@
 package in.printspool.model;
 
+// Modelo para los estratos, relacionado con la tabla STRATUMS en la base de datos
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

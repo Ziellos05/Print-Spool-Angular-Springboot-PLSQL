@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/* Proceso en batch encargado de generar la facturación mensualmente a través de
+ * @Scheduled annotation, utiliza JDBC para llamar a PL/SQL. La fecha de actualización
+ * es el último día de cada mes a las 17:00 horas, este valor se puede configurar en
+ * application.properties */
 @Component
 @EnableAsync
 public class BatchProcess {

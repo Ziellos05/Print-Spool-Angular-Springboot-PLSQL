@@ -1,5 +1,9 @@
 -- Asignando cuota ilimitada sobre la tabla 
 
+/* Estas dos lineas permiten que tanto el esquema de la tabla como el esquema del 
+ * usuario SYS puedan realizar modificaciones sobre las tablas
+ */
+
 ALTER USER APP_DATOS_IMPRESION quota unlimited on USERS;
 
 ALTER USER SYS quota unlimited on USERS;

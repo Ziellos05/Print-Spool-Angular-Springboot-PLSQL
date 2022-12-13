@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 
+// CONTROLLER DEL CRUD DE ESTRATOS
 @RestController
 @RequestMapping("/stratum")
 @Tag(name = "Stratum", description = "Stratum CRUD")
@@ -34,6 +35,7 @@ public class StratumController {
 	@Autowired
 	private StratumService stratumService;
 
+	// GET para obtener todos estratos
 	@Operation(summary = "Get all stratums")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Stratums obtained", content = {
@@ -48,6 +50,7 @@ public class StratumController {
 		}
 	}
 
+	// Get para obtener un estrato por su id
 	@Operation(summary = "Get stratum by id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Stratums obtained", content = {
@@ -65,6 +68,8 @@ public class StratumController {
 		}
 	}
 
+	/* Post para crear un nuevo estrato,
+	* no funciona si el estrato ya existe */
 	@Operation(summary = "Create a new stratum")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Stratum added", content = {
@@ -85,6 +90,8 @@ public class StratumController {
 
 	}
 
+	/* Put para editar un estrato por su id,
+	 * no funciona si el estrato no existe */
 	@Operation(summary = "Edit a specific stratum by Id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Stratum edited", content = {
@@ -106,6 +113,9 @@ public class StratumController {
 
 	}
 
+	/* Delete para eliminar un estrato por su id, 
+	 * no funciona si el estrato no existe o si 
+	 * el estrato es 6 o menor */
 	@Operation(summary = "Delete a specific stratum by Id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Stratum deleted", content = @Content),

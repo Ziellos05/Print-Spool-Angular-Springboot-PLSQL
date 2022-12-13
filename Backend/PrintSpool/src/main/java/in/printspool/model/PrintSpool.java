@@ -1,5 +1,6 @@
 package in.printspool.model;
 
+// Modelo para el print spool a obtener
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;

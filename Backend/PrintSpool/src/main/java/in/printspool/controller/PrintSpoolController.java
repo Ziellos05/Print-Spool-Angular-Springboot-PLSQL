@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+// CONTROLLER PARA LA GENERACIÓN DEL PRINT SPOOL
 @RestController
 @RequestMapping(value = "/spool")
 @Tag(name = "PrintSpool", description = "Dinamic Print Spool generator")
@@ -35,6 +36,10 @@ public class PrintSpoolController {
 	@Autowired
 	private PrintSpoolRepository printSpoolRepository;
 
+	/* El siguiente método genera dinámicamente el print spool a recibir en formato
+	 * JSON, cuenta con varios condicionales para traer los campos solicitados, 
+	 * parsea a tipo byte[] para poder eliminar campos vacíos o nulos y retorna únicamente
+	 * el print spool con la información requerida*/
 	@Operation(summary = "Get dinamic print spool for the chosen date with this format: 'MM/YYYY'")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Print spool obtained", content = {
@@ -46,6 +51,7 @@ public class PrintSpoolController {
 			spoolConfig.setNConsumptions(1);
 		}
 		try {
+				//Retorna todos los campos
 			if (spoolConfig.isStratum() && spoolConfig.isAvgConsumption() && spoolConfig.isLastConsumption()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSAL(spoolConfig);
@@ -55,6 +61,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByte, HttpStatus.OK);
 
+				// No retorna los últimos consumos
 			} else if (spoolConfig.isStratum() && spoolConfig.isAvgConsumption()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSA(spoolConfig);
@@ -73,6 +80,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
 
+				// No retorna el promedio
 			} else if (spoolConfig.isStratum() && spoolConfig.isLastConsumption()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSL(spoolConfig);
@@ -91,6 +99,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
 
+				// No retorna el estrato
 			} else if (spoolConfig.isAvgConsumption() && spoolConfig.isLastConsumption()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolAL(spoolConfig);
@@ -109,6 +118,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
 
+				// No retorna promedio ni últimos consumos
 			} else if (spoolConfig.isStratum()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolS(spoolConfig);
@@ -128,6 +138,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
 
+				// No retorna estrato ni últimos consumos
 			} else if (spoolConfig.isAvgConsumption()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolA(spoolConfig);
@@ -147,6 +158,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
 
+				// No retorna estrato ni promedio
 			} else if (spoolConfig.isLastConsumption()) {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolL(spoolConfig);
@@ -166,6 +178,7 @@ public class PrintSpoolController {
 
 				return new ResponseEntity<byte[]>(jsonByteFinal, HttpStatus.OK);
 
+				// No retorna estrato, promedio ni último consumo
 			} else {
 
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpool(spoolConfig);

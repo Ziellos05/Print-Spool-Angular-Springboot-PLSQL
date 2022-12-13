@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+// CONTROLLER PARA LA GENERACIÓN DE FACTURAS
 @RestController
 @RestControllerAdvice
 @RequestMapping(value = "/bills")
@@ -25,6 +25,10 @@ public class BillsController {
 	@Autowired
 	private BillsRepository eDAO;
 	
+	/* El siguiente método genera la facturación para el mes en curso,
+	 * su función es permitir que se pueda generar el print spool para el mes actual
+	 * aunque aún no haya concluido el mes y por ende el print spool no se haya
+	 * actualizado de forma automática */
 	@Operation(summary = "Update bills data to the current date")
 	@ApiResponses(value = { 
 	  @ApiResponse(responseCode = "200", description = "Bills have been updated for the current month till this moment", 
@@ -32,7 +36,7 @@ public class BillsController {
 	  @ApiResponse(responseCode = "400", description = "Bad request", 
 	    content = @Content) })
 	@GetMapping()
-	public ResponseEntity<String> saveBills() {
+	private ResponseEntity<String> saveBills() {
 		try {
 			eDAO.save();
 			return ResponseEntity.ok("Bills have been updated for the current month till this moment");

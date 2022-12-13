@@ -1,5 +1,6 @@
 package in.printspool.model;
 
+// Modelo para el request body a utilizar para obtener un print spool dinámico
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;

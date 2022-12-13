@@ -1003,7 +1003,8 @@ INSERT ALL
      into APP_DATOS_IMPRESION.CLIENTS (ID, DOCUMENT, NAME, ADDRESS, STRATUM_ID) values (1000, 1035832097, 'Candi Brik', 'St 523 Av 506', 5)
 SELECT * FROM dual
 
--- Agregar el siguiente query para darle mayor realismo a las calles y avenidas a utilizar
+/* Ejecutar el siguiente comando para darle mayor realismo a las calles y avenidas a utilizar, 
+ * va a actualizar las direcciones de los clientes */
 
 UPDATE APP_DATOS_IMPRESION.CLIENTS 
    SET ADDRESS  = 

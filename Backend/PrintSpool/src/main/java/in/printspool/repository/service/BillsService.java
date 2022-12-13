@@ -9,12 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import in.printspool.repository.BillsRepository;
 
+/* Servicio encargado de generar la facturación, utiliza JDBC */
 @Repository
 public class BillsService implements BillsRepository {
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
+	// Llamado a un método PL/SQL a través de JDBC
 	@Override
 	public int save() {
 		Date date = new Date();

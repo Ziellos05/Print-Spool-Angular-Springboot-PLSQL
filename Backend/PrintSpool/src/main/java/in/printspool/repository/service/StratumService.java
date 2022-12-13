@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import in.printspool.model.Stratum;
 import in.printspool.repository.StratumRepository;
 
+// Servicio encargado del CRUD de los estrados, utiliza JPA
 @Service
 public class StratumService {
 	

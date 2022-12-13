@@ -3,7 +3,7 @@
 -- Paquete agrupando procedimientos y funciones
 
 CREATE OR REPLACE PACKAGE print_spool AS 
--- Función que calcula un rate básico de entrega de las facturas
+-- Función que calcula un rate de entrega de las facturas
    FUNCTION del_rate(address VARCHAR2) RETURN NUMBER;
 -- Función que retorna el costo para cada factura
    FUNCTION cal_amount(cost_per_cm NUMBER, cubic_meters NUMBER) RETURN NUMBER;
@@ -18,8 +18,16 @@ CREATE OR REPLACE PACKAGE print_spool AS
 END print_spool;
 
 CREATE OR REPLACE PACKAGE BODY print_spool AS
+
 -- Función que calcula un rate básico de entrega de las facturas
-	FUNCTION del_rate(address VARCHAR2)  
+
+/* Esta función calcula un número entre 1001 y 999999 para cada dirección, generando el mismo número para cada factura
+ * ubicada entre una calle con una avenida dada, además el aumento de los números generados se da siguiendo una secuencia,
+ * de tal manera que el delivery rate genera un órden de entrega contínuo. Existen dos restricciones para este algoritmo:
+ * 1. Solo sirve para direcciones dadas por St XXX # XXX XX o Av XXX # XXX XX.
+ * 2. Solo sirve para calles y avenidas con máximo 3 cifras, por lo que aplica para cualquier ciudad colombiana. */
+
+FUNCTION del_rate(address VARCHAR2)  
 RETURN number 
 IS 	
 	st NUMBER;
@@ -27,15 +35,10 @@ IS
 	avV VARCHAR2(100);
     rate NUMBER;
 BEGIN 
-	IF REGEXP_SUBSTR(address, '[^ ]+', 1, 1) = 'St' THEN
-		st := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
-		av := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
-	ELSE
-		av := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
-		st := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
-	END IF;
+	st := REGEXP_SUBSTR(address, '[^ ]+', 1, 2);
+	av := REGEXP_SUBSTR(address, '[^ ]+', 1, 4);
 	IF MOD(st, 2) = 0 THEN
-		av := ABS(av-999);
+		av := ABS(av-300);
 	END IF;
 	avV := TO_CHAR(av);
 	IF LENGTH(avV) = 1 THEN
@@ -47,8 +50,13 @@ BEGIN
 	rate := TO_NUMBER(avV);
 	RETURN rate;
 END del_rate;
+
 -- Función que retorna el costo para cada factura
-	FUNCTION cal_amount(cost_per_cm NUMBER, cubic_meters NUMBER)  
+
+/* Esta función recupera el costo por centímetro cúbico de cada estrato y los metros cúbicos de cada consumo y entrega
+ * el resultado de la multiplicación entre estos 2 para agregarlo a la factura generada */
+
+FUNCTION cal_amount(cost_per_cm NUMBER, cubic_meters NUMBER)  
 RETURN number 
 IS 
     amount number; 
@@ -56,8 +64,13 @@ BEGIN
 	amount := cost_per_cm * cubic_meters; 
 	RETURN amount;
 END cal_amount;
+
 -- Generación de la fecha de pago
-	FUNCTION cal_due(begining VARCHAR2, time_lapse NUMBER)  
+
+/* Esta función obtiene la fecha de facturación del consumo y le suma el tiempo para realizar el pago para el cliente 
+ * de acuerdo a su estrato, agregando este dato a la factura generada */
+
+FUNCTION cal_due(begining VARCHAR2, time_lapse NUMBER)  
 RETURN DATE 
 IS 
     ending DATE; 
@@ -65,8 +78,13 @@ BEGIN
 	ending := TO_DATE(begining, 'MM/YYYY')+time_lapse+(17/24); 
 	RETURN ending;
 END cal_due;
+
 -- Procedimiento que inserta los elementos en la tabla BILLS para generar el spool mensual
-   PROCEDURE spool_gen (period VARCHAR2) AS
+
+/* Este procedimiento genera la facturación para un mes dado, se utiliza desde el Backend para la generación
+ * periódica de las facturas y para la generación de la facturación hasta el día actual del mes en el que se solicite */
+
+PROCEDURE spool_gen (period VARCHAR2) AS
 BEGIN
 	  INSERT INTO APP_DATOS_IMPRESION.BILLS b (PAYMENT_DUE, AMOUNT, DELIVERY_RATE, CONSUMPTION_ID) 
 	SELECT print_spool.cal_due(p.MONTH_YEAR, s.BUSINESS_DAYS), 
@@ -89,8 +107,13 @@ BEGIN
             b2.CONSUMPTION_ID  = c2.ID 
     );
 END spool_gen;
+
 -- Función que genera el average de los últimos Z meses para el print spool
-	FUNCTION cal_avg(id_client IN INT, Z IN INT)  
+
+/* Esta función genera el consumo promedio de los X últimos meses para un cliente dado,
+ * posteriormente lo envía al print spool*/
+
+FUNCTION cal_avg(id_client IN INT, Z IN INT)  
 	RETURN NUMBER    
 	IS     
 	x NUMBER;
@@ -108,8 +131,13 @@ END spool_gen;
 		x :=y;    
 	RETURN x;    
 	END cal_avg;
+
 -- Función que genera la lista de los Z últimos consumos
-   FUNCTION get_last_Z(id_client IN INT, Z IN INT) RETURN VARCHAR2
+
+/* Esta función toma los últimos X consumos y los devuelve en un string donde cada consumo está separado
+ * del otro por una coma, de esta manera se pueden enviar al print spool de forma dinámica */
+
+FUNCTION get_last_Z(id_client IN INT, Z IN INT) RETURN VARCHAR2
 	   IS     
 	x VARCHAR2(100);
 	y VARCHAR2(100);

@@ -11,12 +11,18 @@ import in.printspool.model.PrintSpool;
 import in.printspool.model.SpoolConfig;
 import in.printspool.repository.PrintSpoolRepository;
 
+// Servicio encargado de generar el print spool dinámico, utiliza JDBC
 @Repository
 public class PrintSpoolService implements PrintSpoolRepository {
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
+	/* S: Stratum, A: Average (Promedio) y L: Last (Últimos),
+	 * en referencia a la información que se solicitará dinámicamente,
+	 * todas las funciones obtienen el print spool con específicamente
+	 * los campos requeridos, se utiliza JDBC para poder enviar queries
+	 * complejas a la base de datos Oracle*/
 	@Override
 	public List<PrintSpool> getPrintSpoolSAL(SpoolConfig spoolConfig) {
 		return jdbcTemplate.query("SELECT b.ID, "
