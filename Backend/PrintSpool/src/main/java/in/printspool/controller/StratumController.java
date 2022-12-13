@@ -18,25 +18,43 @@ import org.springframework.web.bind.annotation.RestController;
 
 import in.printspool.model.Stratum;
 import in.printspool.repository.service.StratumService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 
 @RestController
 @RequestMapping("/stratum")
+@Tag(name = "Stratum", description = "Stratum CRUD")
 public class StratumController {
 
 	@Autowired
 	private StratumService stratumService;
-	
+
+	@Operation(summary = "Get all stratums")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "Stratums obtained", content = {
+					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Stratum.class))) }),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@GetMapping
-	private ResponseEntity<List<Stratum>> getAllStratum () {
+	private ResponseEntity<List<Stratum>> getAllStratum() {
 		try {
 			return ResponseEntity.ok(stratumService.getAllStratum());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
-	
+
+	@Operation(summary = "Get stratum by id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Stratums obtained", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = Stratum.class)) }),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@GetMapping("/{stratumId}")
-	private ResponseEntity<Optional<Stratum>> getStratum (@PathVariable Long stratumId) {
+	private ResponseEntity<Optional<Stratum>> getStratum(@PathVariable Long stratumId) {
 		try {
 			if (stratumService.getStratum(stratumId).isEmpty()) {
 				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
@@ -46,51 +64,69 @@ public class StratumController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
-	
+
+	@Operation(summary = "Create a new stratum")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Stratum added", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = Stratum.class)) }),
+			@ApiResponse(responseCode = "409", description = "Confict, status is currently in the database", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@PostMapping
-	private ResponseEntity<Stratum> saveStratum (@RequestBody Stratum stratum) {
+	private ResponseEntity<Stratum> saveStratum(@RequestBody Stratum stratum) {
 		try {
 			if (!stratumService.getStratum(stratum.getId()).isEmpty()) {
 				return ResponseEntity.status(HttpStatus.CONFLICT).build();
 			}
 			Stratum temp = stratumService.create(stratum);
-			return ResponseEntity.created(new URI("/api/stratum"+temp.getId())).body(temp);
+			return ResponseEntity.created(new URI("/api/stratum" + temp.getId())).body(temp);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
-		
+
 	}
-	
+
+	@Operation(summary = "Edit a specific stratum by Id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Stratum edited", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = Stratum.class)) }),
+			@ApiResponse(responseCode = "204", description = "No content, stratum doesn't exist in the database", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@PutMapping("/{stratumId}")
-	private ResponseEntity<Stratum> updateStratum (@RequestBody Stratum stratum, @PathVariable Long stratumId) {		
+	private ResponseEntity<Stratum> updateStratum(@RequestBody Stratum stratum, @PathVariable Long stratumId) {
 		try {
 			if (stratumService.getStratum(stratumId).isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			}
 			stratum.setId(stratumId);
 			Stratum temp = stratumService.create(stratum);
-			return ResponseEntity.created(new URI("/api/stratum"+temp.getId())).body(temp);
+			return ResponseEntity.created(new URI("/api/stratum" + temp.getId())).body(temp);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
-		
+
 	}
-	
+
+	@Operation(summary = "Delete a specific stratum by Id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Stratum deleted", content = @Content),
+			@ApiResponse(responseCode = "405", description = "Forbidden, you can't delete this stratum", content = @Content),
+			@ApiResponse(responseCode = "417", description = "Expectation failed, this stratum doesn't exist", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@DeleteMapping("/{stratumId}")
-	private ResponseEntity<String> deleteStratum (@PathVariable Long stratumId) {
+	private ResponseEntity<String> deleteStratum(@PathVariable Long stratumId) {
 		try {
 			if (stratumId < 7) {
-				return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Es prohibido eliminar el estrato "+stratumId);
+				return ResponseEntity.status(HttpStatus.FORBIDDEN)
+						.body("It's forbidden delete stratum" + stratumId);
 			} else if (stratumService.getStratum(stratumId).isEmpty()) {
-				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Este estrato no existe :)");
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("This stratum doesn't exist :)");
 			}
 			stratumService.delete(stratumId);
-			return ResponseEntity.ok("El estrato "+stratumId+" ha sido eliminado");
+			return ResponseEntity.ok("Stratum " + stratumId + " has been deleted");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 
 	}
 
-	
 }
