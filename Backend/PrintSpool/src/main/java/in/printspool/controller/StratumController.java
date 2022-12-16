@@ -119,7 +119,7 @@ public class StratumController {
 	@Operation(summary = "Delete a specific stratum by Id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Stratum deleted", content = @Content),
-			@ApiResponse(responseCode = "405", description = "Forbidden, you can't delete this stratum", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Forbidden, you can't delete this stratum", content = @Content),
 			@ApiResponse(responseCode = "417", description = "Expectation failed, this stratum doesn't exist", content = @Content),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@DeleteMapping("/{stratumId}")
