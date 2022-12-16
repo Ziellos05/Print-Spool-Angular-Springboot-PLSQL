@@ -25,9 +25,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	
-	//
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-	
+	// JSON to CSV
+		implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0'
+		implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+		
 	// OpeAPI
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 	implementation 'joda-time:joda-time:2.12.1'

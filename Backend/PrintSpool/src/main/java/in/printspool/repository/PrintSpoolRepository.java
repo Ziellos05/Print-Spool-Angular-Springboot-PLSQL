@@ -4,6 +4,7 @@ package in.printspool.repository;
 import java.util.List;
 
 import in.printspool.model.PrintSpool;
+import in.printspool.model.PrintSpoolCsv;
 import in.printspool.model.SpoolConfig;
 
 public interface PrintSpoolRepository {
@@ -28,5 +29,14 @@ public interface PrintSpoolRepository {
 	List<PrintSpool> getPrintSpoolL(SpoolConfig spoolConfig);
 	
 	List<PrintSpool> getPrintSpool(SpoolConfig spoolConfig);
+	
+	/* Esta función inserta la información sobre el CSV generado en una tabla para poder hacer 
+	 * seguimiento del archivo */
+	
+	int printSpoolCsv(String period, String link, String dateCreation);
+	
+	/* Get para obtener la lista de todos los archivos creados en formato .CSV */
+	
+	List<PrintSpoolCsv> getPrintSpoolCsv();
 	
 }
