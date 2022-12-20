@@ -111,12 +111,18 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	 * seguimiento del archivo */
 	
 	@Override
-	public int printSpoolCsv(String link, String dateCreation, String period) {
-		return jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (LINK, CREATED, PERIOD_ID) "
+	public List<PrintSpoolCsv> printSpoolCsv(String link, String dateCreation, String period) {
+		jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (LINK, CREATED, PERIOD_ID) "
 				+ "SELECT ?, ?, p2.ID	"
 				+ "FROM APP_DATOS_IMPRESION.PERIODS p2	"
 				+ "WHERE p2.MONTH_YEAR = ?", 
 				new Object [] {link, dateCreation, period});
+		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.LINK, p.CREATED "
+				+ "FROM APP_DATOS_IMPRESION.PRINTSPOOLS p "
+				+ "INNER JOIN APP_DATOS_IMPRESION.PERIODS p2 "
+				+ "ON p2.ID = p.PERIOD_ID WHERE p.LINK = ?", 
+				new BeanPropertyRowMapper<PrintSpoolCsv>(
+						PrintSpoolCsv.class), new Object [] {link});
 	}
 	
 	/* Get para obtener la lista de todos los archivos creados en formato .CSV */

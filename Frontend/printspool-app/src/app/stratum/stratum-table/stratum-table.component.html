@@ -1,0 +1,97 @@
+<div class="card">
+    <p-toast></p-toast>
+    <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+    <p-panel header="Stratum Manager" [style]="{width: '70%', margin: '0 auto'}">
+        <div style="margin-bottom: 20px">
+            <p-menubar [model]="items"></p-menubar>
+        </div>
+    <p-table [value]="stratumArray" selectionMode="single" [(selection)]="selectedStratum" dataKey="id" styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Cost per CM</th>
+                <th>Business days</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-stratum>
+            <tr [pSelectableRow]="stratum" >
+                <td>{{stratum.id}}</td>
+                <td>{{stratum.costPerCm}}</td>
+                <td>{{stratum.businessDays}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<!-- AQUÍ SE AGREGA UNO NUEVO-->
+
+<p-dialog header="New stratum" [(visible)]="displaySaveDialog" [modal]="true">
+    <div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="id">ID</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputNumber id="id" [(ngModel)]="stratum.id"></p-inputNumber>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="costPerCm">Cost Per CM</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputNumber id="costPerCm" [(ngModel)]="stratum.costPerCm" mode="currency" currency="USD" locale="en-US" [minFractionDigits]="1" [maxFractionDigits]="2"></p-inputNumber>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="businessDays">Business Days</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputNumber id="businessDays" [(ngModel)]="stratum.businessDays"></p-inputNumber>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-check" (click)="saveStratum()" label="Guardar"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<!-- EDITOR DE ESTRATOS AQUÍ -->
+
+<p-dialog header="Edit stratum" [(visible)]="displayEditDialog" [modal]="true">
+    <div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="id">ID</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputNumber id="id" [(ngModel)]="stratum.id" [readonly]="true"></p-inputNumber>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="costPerCm">Cost Per CM</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputNumber id="costPerCm" [(ngModel)]="stratum.costPerCm" mode="currency" currency="USD" locale="en-US" [minFractionDigits]="1" [maxFractionDigits]="2"></p-inputNumber>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="businessDays">Business Days</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputNumber id="businessDays" [(ngModel)]="stratum.businessDays"></p-inputNumber>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-check" (click)="editStratum()" label="Guardar"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+</div>

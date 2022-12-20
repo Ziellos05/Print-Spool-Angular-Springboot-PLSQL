@@ -3,43 +3,12 @@
   <app-header></app-header>
 </div>
 
-<!-- Breadcrumb -->
+<!-- Page -->
 
-  <p-breadcrumb [model]="homePage" [home]="home"></p-breadcrumb>
-
-  <h2>Print Spool Manager</h2>
-
-<div class="cards">
-    <div><p-card header="Stratum Terms" subheader="Manage the stratums" [style]="{width: '360px'}" styleClass="shadow-2">
-      <ng-template pTemplate="header">
-          <img alt="Card" src="../assets/stratumcard.PNG">
-      </ng-template>
-      <ng-template pTemplate="footer">
-          <p-button label="Let's do it" icon="pi pi-bolt" styleClass="p-button-danger" [style]="{'margin-left': '6em'}"></p-button>
-      </ng-template>
-  </p-card></div>
-    <div><p-card header="Print Spool" subheader="Generate print spool file" [style]="{width: '360px'}" styleClass="shadow-2">
-      <ng-template pTemplate="header">
-          <img alt="Card" src="../assets/printspoolcard.PNG">
-      </ng-template>
-      <ng-template pTemplate="footer">
-          <p-button label="Let's do it" icon="pi pi-bolt" styleClass="p-button-danger" [style]="{'margin-left': '6em'}"></p-button>
-      </ng-template>
-  </p-card></div>
-    <div><p-card header="File Upload" subheader="Manage files uploads" [style]="{width: '360px'}" styleClass="shadow-2">
-      <ng-template pTemplate="header">
-          <img alt="Card" src="../assets/uploadfilecard.PNG">
-      </ng-template>
-      <ng-template pTemplate="footer">
-          <p-button label="Let's do it" icon="pi pi-bolt" styleClass="p-button-danger" [style]="{'margin-left': '6em'}"></p-button>
-      </ng-template>
-  </p-card></div>
-</div>
+<router-outlet></router-outlet>
 
 <!-- Footer -->
 
 <div>
 <app-footer></app-footer>
 </div>
-
-<router-outlet></router-outlet>

@@ -1,16 +1,27 @@
 package in.printspool.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +44,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping(value = "/spool")
 @Tag(name = "PrintSpool", description = "Dinamic Print Spool generator")
+@CrossOrigin({"*"})
 public class PrintSpoolController {
 
 	@Autowired
@@ -48,7 +60,7 @@ public class PrintSpoolController {
 					@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class)) }),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@PostMapping
-	private ResponseEntity<String> getPrintSpool(@RequestBody SpoolConfig spoolConfig) {
+	private ResponseEntity<PrintSpoolCsv> getPrintSpool(@RequestBody SpoolConfig spoolConfig) {
 		
 		
 		if (spoolConfig.getNConsumptions() == 0) {
@@ -68,8 +80,7 @@ public class PrintSpoolController {
 				PrintSpoolUtil util = new PrintSpoolUtil();
 				JsonNode root = util.jsonNodeGenerator(printSpool);				
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 				// No retorna los últimos consumos
 			} else if (spoolConfig.isStratum() && spoolConfig.isAvgConsumption()) {
 				
@@ -89,10 +100,11 @@ public class PrintSpoolController {
 				/* Generación del .JSON, .CSV y agregado de la información a la tabla que hace seguimiento a los archivos creados */
 				
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
 				
-				/* Retorna link en el local para acceder al archivo y poder "descargarlo" */
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				/* Retorna objeto con la info para acceder al archivo y poder "descargarlo" */
+				
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				
 				// No retorna el promedio
 			} else if (spoolConfig.isStratum() && spoolConfig.isLastConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSL(spoolConfig);
@@ -105,8 +117,7 @@ public class PrintSpoolController {
 					}
 				}							
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 				// No retorna el estrato
 			} else if (spoolConfig.isAvgConsumption() && spoolConfig.isLastConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolAL(spoolConfig);
@@ -119,8 +130,7 @@ public class PrintSpoolController {
 					}
 				}							
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 				// No retorna promedio ni últimos consumos
 			} else if (spoolConfig.isStratum()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolS(spoolConfig);
@@ -134,8 +144,7 @@ public class PrintSpoolController {
 					}
 				}							
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 				// No retorna estrato ni últimos consumos
 			} else if (spoolConfig.isAvgConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolA(spoolConfig);
@@ -149,8 +158,7 @@ public class PrintSpoolController {
 					}
 				}						
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 				// No retorna estrato ni promedio
 			} else if (spoolConfig.isLastConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolL(spoolConfig);
@@ -164,8 +172,7 @@ public class PrintSpoolController {
 					}
 				}						
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 				// No retorna estrato, promedio ni último consumo
 			} else {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpool(spoolConfig);
@@ -180,8 +187,7 @@ public class PrintSpoolController {
 					}
 				}				
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate());
-				return new ResponseEntity<String>(csvList.get(0), HttpStatus.OK);
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
