@@ -10,15 +10,13 @@ export class PrintSpoolService {
 
   baseURL: string = "http://localhost:8080/"
 
-  downloadURL: string = "file:///C:/Users/1152707384/Desktop/Requerimiento%20N16/Desarrollo/Backend/PrintSpool/"
-
   constructor(private http:HttpClient) { }
 
   getPrintSpools() : Observable<any>{
     return this.http.get(this.baseURL+"spool")
   }
 
-  updatePrintSpools() : Observable<any>{
+  updateBills() : Observable<any>{
     return this.http.get(this.baseURL+"bills", { responseType: 'text' })
   }
 
@@ -29,6 +27,16 @@ export class PrintSpoolService {
     headers = headers.set('Content-Type', 'application/json');
 
     return this.http.post(this.baseURL+"spool", JSON.stringify(spoolConfig), {headers: headers});
+  }
+
+  download(link: string) : Observable<any>{
+    let params = new HttpParams();
+    params = params.append('file', link);
+    return this.http.get(this.baseURL+"spool/download", {params: params, responseType: 'blob'});
+  }
+
+  getPeriods() : Observable<any>{
+    return this.http.get(this.baseURL+"period")
   }
 
 }

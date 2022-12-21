@@ -81,7 +81,9 @@ public class StratumController {
 	@PostMapping
 	private ResponseEntity<Stratum> saveStratum(@RequestBody Stratum stratum) {
 		try {
-			if (!stratumService.getStratum(stratum.getId()).isEmpty()) {
+			if (stratum.getId()<1) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			} else if (!stratumService.getStratum(stratum.getId()).isEmpty()) {
 				return ResponseEntity.status(HttpStatus.CONFLICT).build();
 			}
 			Stratum temp = stratumService.create(stratum);

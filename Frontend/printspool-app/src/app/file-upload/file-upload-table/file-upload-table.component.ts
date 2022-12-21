@@ -12,13 +12,14 @@ import { UploadFile } from '../../models/upload-file'
 })
 export class FileUploadTableComponent {
 
-  uploadsArray: UploadFile[] = [];
+  uploadsArray: UploadFile[];
+  cols: any[];
 
   file: UploadFile;
 
   selectedFile: UploadFile = {
     id: 0,
-    link: "",
+    filename: "",
     created: ""
   }
   
@@ -49,29 +50,71 @@ export class FileUploadTableComponent {
       message: "Are you sure do you want to download this Print Spool?",
       accept: () => {
 
-        this.downloadService.download(this.selectedFile.link).subscribe((data) => {
+        this.uploadFileService.download(this.selectedFile.filename).subscribe((data) => {
 
           this.blob = new Blob([data]);
         
           var downloadURL = window.URL.createObjectURL(data);
           var link = document.createElement('a');
           link.href = downloadURL;
-          link.download = this.selectedFile.link.split('/')[4];
+          link.download = this.selectedFile.filename;
           link.click();
           this.messageService.add({severity: 'success', summary: "Result", detail:"Download has started"});
+        },
+        error => {
+          console.log(error);
+          this.messageService.add({severity: 'info', summary: 'Internal error', detail: ''});
         });
 
       }
     })
   };
 
+  onUpload(event: any, fileUpload: any) {
+    this.displayUploadDialog = false; // Cierra la ventana de descarga :)
+    fileUpload.clear(); // Limpia la ventana de subida
+    switch (event.error.status) {
+      case 200:
+        this.messageService.add({severity: 'info', summary: 'File has been uploaded', detail: 'Everything is ok'}); 
+        this.uploadFileService.getFileUploads().subscribe(
+          (result: any ) => {
+            this.uploadsArray = [];
+            for (let i = 0; i < result.length; i++) {
+              let upload = result[i] as UploadFile;
+              this.uploadsArray.push(upload);
+            }
+          },
+          error => {
+            console.log(error);
+            this.messageService.add({severity: 'info', summary: 'Internal Error', detail: ''});
+          }
+        )
+        break;
+      case 400:
+        this.messageService.add({severity: 'info', summary: 'Bad request', detail: ''});
+        break;
+      case 409:
+        this.messageService.add({severity: 'info', summary: 'Denied', detail: 'This file already exist'});
+        break;
+      case 413:
+        this.messageService.add({severity: 'info', summary: 'Denied', detail: 'This file is larger than allowed'});
+        break;
+      default: 
+      this.messageService.add({severity: 'info', summary: 'Internal error', detail: ''});
+    }
+
+  }
+
   ngOnInit() {
+
     this.uploadFileService.getFileUploads().subscribe(
       (result: any ) => {
+        let uploadsArray: UploadFile[] = [];
         for (let i = 0; i < result.length; i++) {
           let upload = result[i] as UploadFile;
-          this.uploadsArray.push(upload);
+          uploadsArray.push(upload);
         }
+        this.uploadsArray = uploadsArray;
       },
       error => {
         console.log(error);
@@ -88,6 +131,11 @@ export class FileUploadTableComponent {
       icon: 'pi pi-fw pi-pencil',
       command: () => this.downloadFile()
     }]
+
+    this.cols = [
+      {field: "filename", header: "Filename"},
+      {field: "created", header: "Created"}
+    ];
 
   }
 

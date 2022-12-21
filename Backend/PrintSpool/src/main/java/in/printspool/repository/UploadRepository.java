@@ -11,4 +11,6 @@ public interface UploadRepository {
 	
 	List<Upload> getUploads();
 	
+	List<Upload> getUploadByFilename(String filename);
+	
 }

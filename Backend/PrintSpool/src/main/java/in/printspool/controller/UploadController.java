@@ -3,9 +3,15 @@ package in.printspool.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,24 +45,29 @@ public class UploadController {
 	@Autowired
 	private UploadService uploadService;
 
-	@Operation(summary = "Updates info about upload in database")
+	@Operation(summary = "Uploads and updates info about file in database")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "File has been uploaded successfully", content = @Content),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+			@ApiResponse(responseCode = "409", description = "Conflict", content = @Content),
 			@ApiResponse(responseCode = "413", description = "Payload too large, forbidden >10MB files", content = @Content)})
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    private ResponseEntity<String> fileUpload(@RequestParam("file") MultipartFile file) throws Exception {
 		if (file.getSize()>10000000) {
 			return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).build();
 		}
+		List<Upload> selected = uploadService.getUploadByFilename(file.getOriginalFilename());
+		if (selected.size() != 0) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
 	   try {
-		   String link="src/main/resources/upload/"+file.getOriginalFilename();
-		   File convertFile = new File(link);
+		   String filename=file.getOriginalFilename();
+		   File convertFile = new File("src/main/resources/upload/"+filename);
 		   convertFile.createNewFile();
 		   FileOutputStream fout = new FileOutputStream(convertFile);
 		   fout.write(file.getBytes());
 		   fout.close();
-		   uploadService.saveUpload(link);
+		   uploadService.saveUpload(filename);
 		   return ResponseEntity.ok("File is upload successfully");
 	   } catch (Exception e) {
 		   return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -77,4 +88,27 @@ public class UploadController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
+	
+	@Operation(summary = "Download a file from the upload folder")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "File downloaded", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
+    @GetMapping(value = "/download")
+    public ResponseEntity<Resource> downloadUploaded(@RequestParam("file") String filename) throws IOException {
+        File file = new File("src/main/resources/upload/"+filename);
+        String newFileName = (filename);
+        HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+newFileName);
+        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        header.add("Pragma", "no-cache");
+        header.add("Expires", "0");
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+                .headers(header)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("multipart/form-data"))
+                .body(resource);
+    }
 }

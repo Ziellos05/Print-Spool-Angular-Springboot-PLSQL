@@ -29,13 +29,17 @@ public class PrintSpoolCsv {
 	@NotNull
 	private String period;
 	
-	@Column (name = "LINK")
+	@Column (name = "FILENAME")
 	@NotNull
-	private String link;
+	private String filename;
 	
 	@Column (name = "CREATED")
 	@NotNull
 	private String created;
+	
+	@Column (name = "CODE")
+	@NotNull
+	private String code;
 	
 
 }

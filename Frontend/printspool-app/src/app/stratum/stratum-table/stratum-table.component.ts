@@ -9,7 +9,8 @@ import { Stratum } from '../../models/stratum';
   styleUrls: ['./stratum-table.component.css'],
 })
 export class StratumTableComponent implements OnInit {
-  stratumArray: Stratum[] = [];
+  stratumArray: Stratum[];
+  cols: any[];
 
   items: MenuItem[];
 
@@ -49,7 +50,13 @@ export class StratumTableComponent implements OnInit {
         this.displaySaveDialog = false;
       },
       error => {
+        if (error.status == 409) {
+          this.messageService.add({severity: 'success', summary: "This stratum already exist!", detail:""});
+          console.log(error);
+        } else {
+        this.messageService.add({severity: 'success', summary: "Internal Error", detail:""});
         console.log(error);
+        }
       }
     );
   }
@@ -58,15 +65,20 @@ export class StratumTableComponent implements OnInit {
     this.stratumService.editStratum(this.stratum).subscribe(
       (result:any)=>{
         this.messageService.add({severity: 'success', summary: "Result", detail:"Stratum has been edited"});
-        this.displaySaveDialog = false;
+        this.displayEditDialog = false;
       },
       error => {
+        this.messageService.add({severity: 'success', summary: "Internal Error", detail:""});
         console.log(error);
       }
     );
   };
 
   deleteStratum(){
+    if(this.selectedStratum.id < 7) {
+      this.messageService.add({severity : 'warn', summary: "Warning!", detail: "You can't delete this stratum!"})
+      return;
+    }
     if(this.selectedStratum! && this.selectedStratum.id!) {
       this.stratum = this.selectedStratum;
     } else {
@@ -80,6 +92,11 @@ export class StratumTableComponent implements OnInit {
           (result: any) => {
             this.messageService.add({severity: 'success', summary: "Result", detail:result});
             this.deleteObject(this.selectedStratum.id);
+            this.selectedStratum = new Stratum;
+          },
+          error => {
+            this.messageService.add({severity: 'success', summary: "Internal Error", detail:""});
+            console.log(error);
           }
         )
       }
@@ -96,10 +113,12 @@ export class StratumTableComponent implements OnInit {
   ngOnInit() {
     this.stratumService.getStratums().subscribe(
       (result: any) => {
+        let stratumArray: Stratum[] = [];
         for (let i = 0; i < result.length; i++) {
           let stratum = result[i] as Stratum;
-          this.stratumArray.push(stratum);
+          stratumArray.push(stratum);
         }
+        this.stratumArray = stratumArray;
       },
       (error) => {
         console.log(error);
@@ -123,5 +142,12 @@ export class StratumTableComponent implements OnInit {
         command: () => this.deleteStratum()
       },
     ];
+
+    this.cols = [
+      {field: "id", header: "Stratum"},
+      {field: "costPerCm", header: "Cost per CM"},
+      {field: "businessDays", header: "Business days"},
+    ];
+
   }
 }

@@ -1,7 +1,7 @@
 export class UploadFile {
 
     id: number;
-    link: string;
+    filename: string;
     created: string
 
 }

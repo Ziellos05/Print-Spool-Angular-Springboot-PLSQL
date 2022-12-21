@@ -1,6 +1,8 @@
 package in.printspool.util;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,18 +20,25 @@ public class PrintSpoolUtil {
 	
 	public List<String> csvGenerator (JsonNode res, String date) {
 		
-		String currentDate = java.time.LocalDateTime.now().toString().replace(':', '_').replace('.', '_');
+		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MM-YYYY HH:mm:ss");
+		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd-MM-YYYY-HH-mm-ss");
+		LocalDateTime currentTime = LocalDateTime.now();
+		String toFileTime = currentTime.format(formatter1);
 		
-		String json = "src/main/resources/download/"+date.replace('/', '-')+'_'+currentDate+".json";
+		String toCreatedTime = currentTime.format(formatter2);;
 		
-		String csv = "src/main/resources/download/"+date.replace('/', '-')+'_'+currentDate+".csv";
+		String json = date.replace('/', '-')+'_'+toCreatedTime+".json";
+		
+		String csv = date.replace('/', '-')+'_'+toCreatedTime+".csv";
+		
+		String downloadDir = "src/main/resources/download/";
 		
 		try {	
 	
 			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.writeValue(new File(json), res);
+			objectMapper.writeValue(new File(downloadDir+json), res);
 			
-			JsonNode jsonTree = new ObjectMapper().readTree(new File(json));
+			JsonNode jsonTree = new ObjectMapper().readTree(new File(downloadDir+json));
 			CsvSchema.Builder csvSchemaBuilder = CsvSchema.builder();
 			JsonNode firstObject = jsonTree.elements().next();
 			firstObject.fieldNames().forEachRemaining(fieldName -> {csvSchemaBuilder.addColumn(fieldName);} );
@@ -38,9 +47,9 @@ public class PrintSpoolUtil {
 			CsvMapper csvMapper = new CsvMapper();
 			csvMapper.writerFor(JsonNode.class)
 			  .with(csvSchema)
-			  .writeValue(new File(csv), jsonTree);
+			  .writeValue(new File(downloadDir+csv), jsonTree);
 		
-			List<String> list = Arrays.asList(csv, currentDate);
+			List<String> list = Arrays.asList(csv, toFileTime);
 			
 			return list;
 		

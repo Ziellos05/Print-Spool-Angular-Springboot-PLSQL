@@ -1,5 +1,7 @@
 package in.printspool.repository.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +21,28 @@ public class UploadService implements UploadRepository {
 	
 	// Query nativa de Oracle para actualizar un registro para cada archivo subido
 	@Override
-	public int saveUpload(String link) {
-		return jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.UPLOADS p (LINK, CREATED) VALUES (?, ?)", new Object [] {link, java.time.LocalDateTime.now().toString()});
+	public int saveUpload(String filename) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime currentTime = LocalDateTime.now();
+		String createdTime = currentTime.format(formatter);
+		return jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.UPLOADS p (FILENAME, CREATED) VALUES (?, ?)", new Object [] {filename, createdTime});
 	}
 	
-// Query para obtener los datos sobre los archivos subidos
+	// Query para obtener los datos sobre los archivos subidos
 	@Override
 	public List<Upload> getUploads() {
-		return jdbcTemplate.query("SELECT ID, LINK, CREATED "
-				+ "FROM APP_DATOS_IMPRESION.UPLOADS", 
+		return jdbcTemplate.query("SELECT ID, FILENAME, CREATED "
+				+ "FROM APP_DATOS_IMPRESION.UPLOADS ORDER BY ID DESC", 
 				new BeanPropertyRowMapper<Upload>(
 						Upload.class));
 	}
-
+	
+	// Query para obtener los datos sobre los archivos subidos
+	@Override
+	public List<Upload> getUploadByFilename(String filename) {
+		return jdbcTemplate.query("SELECT ID, FILENAME, CREATED "
+				+ "FROM APP_DATOS_IMPRESION.UPLOADS WHERE FILENAME = ?", 
+				new BeanPropertyRowMapper<Upload>(
+						Upload.class), new Object [] {filename});
+	}
 }

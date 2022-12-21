@@ -16,22 +16,18 @@ interface Period {
 })
 export class PrintSpoolTableComponent {
 
-  printSpoolArray: PrintSpoolCsv[] = [];
+  printSpoolArray: PrintSpoolCsv[];
+  cols: any[];
 
   printSpool: PrintSpoolCsv;
 
-  selectedPrintSpool: PrintSpoolCsv = {
-    id: 0,
-    period: "",
-    link: "",
-    created: ""
-  }
+  selectedPrintSpool: PrintSpoolCsv;
 
   items: MenuItem[];
   
   displaySpoolDialog: boolean = false;
 
-  periods: any[];
+  periods: any[] = [];
 
   spoolConfig: SpoolConfig = {
     date: "",
@@ -48,37 +44,26 @@ export class PrintSpoolTableComponent {
     private messageService: MessageService,
     private confirmationService: ConfirmationService) {
 
-    this.periods = [
-      '01/2022',
-      '02/2022',
-      '03/2022',
-      '04/2022',
-      '05/2022',
-      '06/2022',
-      '07/2022',
-      '08/2022',
-      '09/2022',
-      '10/2022',
-      '11/2022',
-      '12/2022'
-  ];
-
   }
 
   showSpoolDialog(){
   this.displaySpoolDialog = true;
   }
 
-  generatePrintSpool(){
+  generatePrintSpool(generateButton: any){
+    generateButton.disabled = true;
     this.printSpoolService.generatePrintSpool(this.spoolConfig).subscribe(
       (result:any)=>{
         let printSpooCsv = result as PrintSpoolCsv;
         this.printSpoolArray.unshift(printSpooCsv)
         this.messageService.add({severity: 'success', summary: "Result", detail:"CSV print spool has been generated"});
         this.displaySpoolDialog = false;
+        generateButton.disabled = false;
       },
       error => {
         console.log(error);
+        this.messageService.add({severity: 'info', summary: 'Internal Error', detail: ''});
+        this.displaySpoolDialog = false;
       }
     );
   }
@@ -94,16 +79,21 @@ export class PrintSpoolTableComponent {
       message: "Are you sure do you want to download this Print Spool?",
       accept: () => {
 
-        this.downloadService.download(this.selectedPrintSpool.link).subscribe((data) => {
+        this.printSpoolService.download(this.selectedPrintSpool.filename).subscribe((data) => {
 
           this.blob = new Blob([data]);
         
           var downloadURL = window.URL.createObjectURL(data);
           var link = document.createElement('a');
           link.href = downloadURL;
-          link.download = this.selectedPrintSpool.link.split('/')[4];
+          link.download = this.selectedPrintSpool.filename;
           link.click();
           this.messageService.add({severity: 'success', summary: "Result", detail:"Download has started"});
+        },
+        error => {
+          console.log(error);
+          this.messageService.add({severity: 'info', summary: 'Download has failed', detail: ''});
+          this.displaySpoolDialog = false;
         });
 
       }
@@ -114,19 +104,39 @@ export class PrintSpoolTableComponent {
 
     this.printSpoolService.getPrintSpools().subscribe(
       (result: any ) => {
+        let printSpoolArray: PrintSpoolCsv[] = [];
         for (let i = 0; i < result.length; i++) {
           let printSpoolCSV = result[i] as PrintSpoolCsv;
-          this.printSpoolArray.push(printSpoolCSV);
+          printSpoolArray.push(printSpoolCSV);
         }
+        this.printSpoolArray = printSpoolArray;
       },
       error => {
         console.log(error);
       }
     );
 
-    this.printSpoolService.updatePrintSpools().subscribe(
+    this.printSpoolService.getPeriods().subscribe(
+      (result: any ) => {
+        let periods: any[] = [];
+        for (let i = 0; i < result.length; i++) {
+          let period = result[i].monthYear as string;
+          periods.push(period);
+        }
+        this.periods = periods;
+      },
+      error => {
+        console.log(error);
+      }
+    );
+
+    this.printSpoolService.updateBills().subscribe(
       (result: any) => {
         this.messageService.add({severity: 'success', summary: "Result", detail:result});
+      },
+      error => {
+        console.log(error);
+        this.messageService.add({severity: 'info', summary: 'Internal Error', detail: ''});
       }
     );
 
@@ -141,6 +151,12 @@ export class PrintSpoolTableComponent {
         icon: 'pi pi-fw pi-pencil',
         command: () => this.downloadPrintSpool()
       }
+    ];
+
+    this.cols = [
+      {field: "period", header: "Period"},
+      {field: "code", header: "Code"},
+      {field: "created", header: "Created"},
     ];
 
   };

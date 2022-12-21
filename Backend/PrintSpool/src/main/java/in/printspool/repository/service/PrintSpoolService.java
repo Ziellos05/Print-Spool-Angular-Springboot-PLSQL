@@ -111,27 +111,27 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	 * seguimiento del archivo */
 	
 	@Override
-	public List<PrintSpoolCsv> printSpoolCsv(String link, String dateCreation, String period) {
-		jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (LINK, CREATED, PERIOD_ID) "
-				+ "SELECT ?, ?, p2.ID	"
+	public List<PrintSpoolCsv> printSpoolCsv(String filename, String dateCreation, String period, String code) {
+		jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (FILENAME, CREATED, PERIOD_ID, CODE) "
+				+ "SELECT ?, ?, p2.ID, ?	"
 				+ "FROM APP_DATOS_IMPRESION.PERIODS p2	"
 				+ "WHERE p2.MONTH_YEAR = ?", 
-				new Object [] {link, dateCreation, period});
-		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.LINK, p.CREATED "
+				new Object [] {filename, dateCreation, code, period});
+		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
 				+ "FROM APP_DATOS_IMPRESION.PRINTSPOOLS p "
 				+ "INNER JOIN APP_DATOS_IMPRESION.PERIODS p2 "
-				+ "ON p2.ID = p.PERIOD_ID WHERE p.LINK = ?", 
+				+ "ON p2.ID = p.PERIOD_ID WHERE p.FILENAME = ?", 
 				new BeanPropertyRowMapper<PrintSpoolCsv>(
-						PrintSpoolCsv.class), new Object [] {link});
+						PrintSpoolCsv.class), new Object [] {filename});
 	}
 	
 	/* Get para obtener la lista de todos los archivos creados en formato .CSV */
 	@Override
 	public List<PrintSpoolCsv> getPrintSpoolCsv() {
-		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.LINK, p.CREATED "
+		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
 				+ "FROM APP_DATOS_IMPRESION.PRINTSPOOLS p "
 				+ "INNER JOIN APP_DATOS_IMPRESION.PERIODS p2 "
-				+ "ON p2.ID = p.PERIOD_ID", 
+				+ "ON p2.ID = p.PERIOD_ID ORDER BY p.ID DESC", 
 				new BeanPropertyRowMapper<PrintSpoolCsv>(
 						PrintSpoolCsv.class));
 	}

@@ -25,9 +25,9 @@ public class Upload {
 	@Column (name = "ID")
 	private Long id;
 	
-	@Column (name = "LINK")
+	@Column (name = "FILENAME")
 	@NotNull
-	private String link;
+	private String filename;
 	
 	@Column (name = "CREATED")
 	@NotNull

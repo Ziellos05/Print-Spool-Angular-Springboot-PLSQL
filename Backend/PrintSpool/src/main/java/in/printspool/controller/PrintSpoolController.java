@@ -57,7 +57,7 @@ public class PrintSpoolController {
 	@Operation(summary = "Get dinamic print spool download link for the chosen date with this format: 'MM/YYYY'")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Print spool obtained", content = {
-					@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class)) }),
+					@Content(mediaType = "application/json", schema = @Schema(implementation = PrintSpoolCsv.class)) }),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@PostMapping
 	private ResponseEntity<PrintSpoolCsv> getPrintSpool(@RequestBody SpoolConfig spoolConfig) {
@@ -80,7 +80,8 @@ public class PrintSpoolController {
 				PrintSpoolUtil util = new PrintSpoolUtil();
 				JsonNode root = util.jsonNodeGenerator(printSpool);				
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "S-A-L-"+spoolConfig.getNConsumptions();
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				// No retorna los últimos consumos
 			} else if (spoolConfig.isStratum() && spoolConfig.isAvgConsumption()) {
 				
@@ -103,7 +104,8 @@ public class PrintSpoolController {
 				
 				/* Retorna objeto con la info para acceder al archivo y poder "descargarlo" */
 				
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "S-A-"+spoolConfig.getNConsumptions();
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				
 				// No retorna el promedio
 			} else if (spoolConfig.isStratum() && spoolConfig.isLastConsumption()) {
@@ -117,7 +119,8 @@ public class PrintSpoolController {
 					}
 				}							
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "S-L-"+spoolConfig.getNConsumptions();
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				// No retorna el estrato
 			} else if (spoolConfig.isAvgConsumption() && spoolConfig.isLastConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolAL(spoolConfig);
@@ -130,7 +133,8 @@ public class PrintSpoolController {
 					}
 				}							
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "A-L-"+spoolConfig.getNConsumptions();
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				// No retorna promedio ni últimos consumos
 			} else if (spoolConfig.isStratum()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolS(spoolConfig);
@@ -144,7 +148,8 @@ public class PrintSpoolController {
 					}
 				}							
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "S";
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				// No retorna estrato ni últimos consumos
 			} else if (spoolConfig.isAvgConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolA(spoolConfig);
@@ -158,7 +163,8 @@ public class PrintSpoolController {
 					}
 				}						
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "A-"+spoolConfig.getNConsumptions();
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				// No retorna estrato ni promedio
 			} else if (spoolConfig.isLastConsumption()) {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolL(spoolConfig);
@@ -172,7 +178,8 @@ public class PrintSpoolController {
 					}
 				}						
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
+				String code = "L-"+spoolConfig.getNConsumptions();
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
 				// No retorna estrato, promedio ni último consumo
 			} else {
 				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpool(spoolConfig);
@@ -187,8 +194,9 @@ public class PrintSpoolController {
 					}
 				}				
 				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate()).get(0), HttpStatus.OK);
-			}
+				String code = "NOT";
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0), HttpStatus.OK);
+				}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
@@ -208,4 +216,27 @@ public class PrintSpoolController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
+	
+	@Operation(summary = "Download a plain text file with the print spool data")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "File downloaded", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
+    @GetMapping(value = "/download")
+    public ResponseEntity<Resource> downloadCSV(@RequestParam("file") String filename) throws IOException {
+        File file = new File("src/main/resources/download/"+filename);
+        String newFileName = (filename);
+        HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+newFileName);
+        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        header.add("Pragma", "no-cache");
+        header.add("Expires", "0");
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+                .headers(header)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(resource);
+    }
 }

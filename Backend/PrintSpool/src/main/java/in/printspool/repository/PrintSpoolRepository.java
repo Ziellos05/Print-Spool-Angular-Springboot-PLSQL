@@ -33,7 +33,7 @@ public interface PrintSpoolRepository {
 	/* Esta función inserta la información sobre el CSV generado en una tabla para poder hacer 
 	 * seguimiento del archivo */
 	
-	List<PrintSpoolCsv> printSpoolCsv(String period, String link, String dateCreation);
+	List<PrintSpoolCsv> printSpoolCsv(String period, String link, String dateCreation, String code);
 	
 	/* Get para obtener la lista de todos los archivos creados en formato .CSV */
 	

@@ -2,7 +2,8 @@ export class PrintSpoolCsv {
 
     id: number;
     period: string;
-    link: string;
-    created: string
+    filename: string;
+    created: string;
+    code: string
 
 }
