@@ -11,8 +11,7 @@ interface Period {
 
 @Component({
   selector: 'app-print-spool-table',
-  templateUrl: './print-spool-table.component.html',
-  styleUrls: ['./print-spool-table.component.css']
+  templateUrl: './print-spool-table.component.html'
 })
 export class PrintSpoolTableComponent {
 
@@ -56,13 +55,13 @@ export class PrintSpoolTableComponent {
       (result:any)=>{
         let printSpooCsv = result as PrintSpoolCsv;
         this.printSpoolArray.unshift(printSpooCsv)
-        this.messageService.add({severity: 'success', summary: "Result", detail:"CSV print spool has been generated"});
+        this.messageService.add({severity: 'success', summary: "Success", detail:"CSV print spool has been generated"});
         this.displaySpoolDialog = false;
         generateButton.disabled = false;
       },
       error => {
         console.log(error);
-        this.messageService.add({severity: 'info', summary: 'Internal Error', detail: ''});
+        this.messageService.add({severity: 'error', summary: 'Internal Error', detail: ''});
         this.displaySpoolDialog = false;
       }
     );
@@ -88,11 +87,11 @@ export class PrintSpoolTableComponent {
           link.href = downloadURL;
           link.download = this.selectedPrintSpool.filename;
           link.click();
-          this.messageService.add({severity: 'success', summary: "Result", detail:"Download has started"});
+          this.messageService.add({severity: 'success', summary: "Success", detail:"Download has started"});
         },
         error => {
           console.log(error);
-          this.messageService.add({severity: 'info', summary: 'Download has failed', detail: ''});
+          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Download has failed'});
           this.displaySpoolDialog = false;
         });
 
@@ -132,23 +131,23 @@ export class PrintSpoolTableComponent {
 
     this.printSpoolService.updateBills().subscribe(
       (result: any) => {
-        this.messageService.add({severity: 'success', summary: "Result", detail:result});
+        this.messageService.add({severity: 'success', summary: "Success", detail:result});
       },
       error => {
         console.log(error);
-        this.messageService.add({severity: 'info', summary: 'Internal Error', detail: ''});
+        this.messageService.add({severity: 'error', summary: 'Internal Error', detail: ''});
       }
     );
 
     this.items = [
       {
-        label: 'New',
-        icon: 'pi pi-fw pi-plus',
+        label: 'Generate',
+        icon: 'pi pi-file',
         command: () => this.showSpoolDialog()
       },
       {
         label: 'Download',
-        icon: 'pi pi-fw pi-pencil',
+        icon: 'pi pi-download',
         command: () => this.downloadPrintSpool()
       }
     ];

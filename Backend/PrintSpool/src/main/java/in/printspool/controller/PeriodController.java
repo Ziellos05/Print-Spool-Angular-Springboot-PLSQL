@@ -39,7 +39,7 @@ public class PeriodController {
 	private PeriodService periodService;
 
 	// GET para obtener todos estratos
-	@Operation(summary = "Get all periods")
+	@Operation(summary = "Get all periods", hidden= true)
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Periods obtained", content = {
 					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Period.class))) }),

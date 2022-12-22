@@ -7,8 +7,7 @@ import { UploadFile } from '../../models/upload-file'
 
 @Component({
   selector: 'app-file-upload-table',
-  templateUrl: './file-upload-table.component.html',
-  styleUrls: ['./file-upload-table.component.css']
+  templateUrl: './file-upload-table.component.html'
 })
 export class FileUploadTableComponent {
 
@@ -47,7 +46,7 @@ export class FileUploadTableComponent {
       return;
     }
     this.confirmationService.confirm({
-      message: "Are you sure do you want to download this Print Spool?",
+      message: "Are you sure do you want to download this file?",
       accept: () => {
 
         this.uploadFileService.download(this.selectedFile.filename).subscribe((data) => {
@@ -59,11 +58,11 @@ export class FileUploadTableComponent {
           link.href = downloadURL;
           link.download = this.selectedFile.filename;
           link.click();
-          this.messageService.add({severity: 'success', summary: "Result", detail:"Download has started"});
+          this.messageService.add({severity: 'success', summary: "Success", detail:"Download has started"});
         },
         error => {
           console.log(error);
-          this.messageService.add({severity: 'info', summary: 'Internal error', detail: ''});
+          this.messageService.add({severity: 'error', summary: 'Internal error', detail: ''});
         });
 
       }
@@ -75,7 +74,7 @@ export class FileUploadTableComponent {
     fileUpload.clear(); // Limpia la ventana de subida
     switch (event.error.status) {
       case 200:
-        this.messageService.add({severity: 'info', summary: 'File has been uploaded', detail: 'Everything is ok'}); 
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'File has been uploaded'}); 
         this.uploadFileService.getFileUploads().subscribe(
           (result: any ) => {
             this.uploadsArray = [];
@@ -86,21 +85,21 @@ export class FileUploadTableComponent {
           },
           error => {
             console.log(error);
-            this.messageService.add({severity: 'info', summary: 'Internal Error', detail: ''});
+            this.messageService.add({severity: 'error', summary: 'Internal Error', detail: ''});
           }
         )
         break;
       case 400:
-        this.messageService.add({severity: 'info', summary: 'Bad request', detail: ''});
+        this.messageService.add({severity: 'error', summary: 'Bad request', detail: ''});
         break;
       case 409:
-        this.messageService.add({severity: 'info', summary: 'Denied', detail: 'This file already exist'});
+        this.messageService.add({severity: 'warn', summary: 'Warning!', detail: 'This file already exist'});
         break;
       case 413:
-        this.messageService.add({severity: 'info', summary: 'Denied', detail: 'This file is larger than allowed'});
+        this.messageService.add({severity: 'warn', summary: 'Warning!', detail: 'This file is larger than allowed'});
         break;
       default: 
-      this.messageService.add({severity: 'info', summary: 'Internal error', detail: ''});
+      this.messageService.add({severity: 'error', summary: 'Internal error', detail: ''});
     }
 
   }
@@ -122,13 +121,13 @@ export class FileUploadTableComponent {
     )
 
     this.items = [{
-      label: 'New',
-      icon: 'pi pi-fw pi-plus',
+      label: 'Upload',
+      icon: 'pi pi-upload',
       command: () => this.showUploadDialog()
     },
     {
       label: 'Download',
-      icon: 'pi pi-fw pi-pencil',
+      icon: 'pi pi-download',
       command: () => this.downloadFile()
     }]
 

@@ -4,8 +4,7 @@ import { PrintSpoolCsv } from '../models/print-spool-csv'
 
 @Component({
   selector: 'app-print-spool',
-  templateUrl: './print-spool.component.html',
-  styleUrls: ['./print-spool.component.css']
+  templateUrl: './print-spool.component.html'
 })
 export class PrintSpoolComponent {
 

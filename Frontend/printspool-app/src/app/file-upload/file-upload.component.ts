@@ -4,8 +4,7 @@ import { UploadFile } from '../models/upload-file'
 
 @Component({
   selector: 'app-file-upload',
-  templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css']
+  templateUrl: './file-upload.component.html'
 })
 export class FileUploadComponent {
 

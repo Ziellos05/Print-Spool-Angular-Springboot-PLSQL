@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-stratum',
-  templateUrl: './stratum.component.html',
-  styleUrls: ['./stratum.component.css']
+  templateUrl: './stratum.component.html'
 })
 export class StratumComponent {
 

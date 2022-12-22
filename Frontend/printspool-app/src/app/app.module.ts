@@ -32,10 +32,6 @@ import {DropdownModule} from 'primeng/dropdown';
 import {FileUploadModule} from 'primeng/fileupload';
 import {ToastModule} from 'primeng/toast';
 
-
-
-
-
 @NgModule({
   declarations: [
     AppComponent,

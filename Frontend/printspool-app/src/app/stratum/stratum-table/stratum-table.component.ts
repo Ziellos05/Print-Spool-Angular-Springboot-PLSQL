@@ -5,8 +5,7 @@ import { Stratum } from '../../models/stratum';
 
 @Component({
   selector: 'app-stratum-table',
-  templateUrl: './stratum-table.component.html',
-  styleUrls: ['./stratum-table.component.css'],
+  templateUrl: './stratum-table.component.html'
 })
 export class StratumTableComponent implements OnInit {
   stratumArray: Stratum[];
@@ -46,15 +45,15 @@ export class StratumTableComponent implements OnInit {
       (result:any)=>{
         let stratum = result as Stratum;
         this.stratumArray.push(stratum)
-        this.messageService.add({severity: 'success', summary: "Result", detail:"Stratum has been added"});
+        this.messageService.add({severity: 'success', summary: "Success", detail:"Stratum has been added"});
         this.displaySaveDialog = false;
       },
       error => {
         if (error.status == 409) {
-          this.messageService.add({severity: 'success', summary: "This stratum already exist!", detail:""});
+          this.messageService.add({severity: 'warn', summary: "Warning!", detail:"This stratum already exist!"});
           console.log(error);
         } else {
-        this.messageService.add({severity: 'success', summary: "Internal Error", detail:""});
+        this.messageService.add({severity: 'error', summary: "Internal Error", detail:""});
         console.log(error);
         }
       }
@@ -64,38 +63,38 @@ export class StratumTableComponent implements OnInit {
   editStratum() {
     this.stratumService.editStratum(this.stratum).subscribe(
       (result:any)=>{
-        this.messageService.add({severity: 'success', summary: "Result", detail:"Stratum has been edited"});
+        this.messageService.add({severity: 'success', summary: "Success", detail:"Stratum has been edited"});
         this.displayEditDialog = false;
       },
       error => {
-        this.messageService.add({severity: 'success', summary: "Internal Error", detail:""});
+        this.messageService.add({severity: 'error', summary: "Internal Error", detail:""});
         console.log(error);
       }
     );
   };
 
   deleteStratum(){
-    if(this.selectedStratum.id < 7) {
-      this.messageService.add({severity : 'warn', summary: "Warning!", detail: "You can't delete this stratum!"})
-      return;
-    }
     if(this.selectedStratum! && this.selectedStratum.id!) {
       this.stratum = this.selectedStratum;
     } else {
       this.messageService.add({severity : 'warn', summary: "Warning!", detail: "Select a register first"})
       return;
     }
+    if(this.selectedStratum.id < 7) {
+      this.messageService.add({severity : 'warn', summary: "Warning!", detail: "You can't delete this stratum!"})
+      return;
+    }
     this.confirmationService.confirm({
       message: "Are you sure do you want to delete this stratum?",
       accept: () => {
-        this.stratumService.deleteStratum(this.selectedStratum.id).subscribe(
+        this.stratumService.deleteStratum(this.stratum.id).subscribe(
           (result: any) => {
-            this.messageService.add({severity: 'success', summary: "Result", detail:result});
-            this.deleteObject(this.selectedStratum.id);
+            this.messageService.add({severity: 'success', summary: "Success", detail:result});
+            this.deleteObject(this.stratum.id);
             this.selectedStratum = new Stratum;
           },
           error => {
-            this.messageService.add({severity: 'success', summary: "Internal Error", detail:""});
+            this.messageService.add({severity: 'error', summary: "Internal Error", detail:""});
             console.log(error);
           }
         )
