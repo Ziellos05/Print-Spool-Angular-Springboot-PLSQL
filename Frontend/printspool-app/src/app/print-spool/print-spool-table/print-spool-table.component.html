@@ -1,11 +1,15 @@
 <div class="card">
+    <!-- Generador de mensajes al realizar operaciones -->
     <p-toast></p-toast>
+    <!-- Diálogo de confirmación para la descarga de archivos -->
     <p-confirmDialog header="Download print spool" icon="pi pi-exclamation-triangle" acceptButtonStyleClass="p-button-danger" rejectButtonStyleClass="p-button-danger p-button-text"></p-confirmDialog>
-    <!-- p-panel -->
+    <!-- Se puede reemplazar el div de abajo p-panel -->
     <div header="Print Spool Manager" [style]="{width: '60%', height: '100%', margin: '0 auto'}">
+        <!-- Menubar con las funciones de generar y descargar -->
         <div [style]="{'margin-top':'1%', 'margin-bottom':'1%'}">
             <p-menubar [model]="items"></p-menubar>
         </div>
+    <!-- Tabla para visualizar y seleccionar Print Spools -->
     <p-table [value]="printSpoolArray" [scrollable]="true" scrollHeight="17.5rem" selectionMode="single" [(selection)]="selectedPrintSpool" dataKey="id" styleClass="p-datatable-sm" 
     [tableStyle]="{'width': '100%'}" [columns]="cols" [paginator]="true" [rows]="6">
         <ng-template pTemplate="header" let-columns>
@@ -24,6 +28,7 @@
         </ng-template>
     </p-table>
 </div>
+<!-- Modal con el form para generar un nuevo Print Spool -->
 <p-dialog header="New print spool" [(visible)]="displaySpoolDialog" [modal]="true">
     <div>
         <div [style]="{'margin-top':'5%', 'margin-bottom':'5%'}">

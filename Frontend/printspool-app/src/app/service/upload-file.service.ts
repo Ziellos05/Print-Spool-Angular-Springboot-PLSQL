@@ -11,10 +11,12 @@ export class UploadFileService {
 
   constructor(private http:HttpClient) { }
 
+  // Servicio para obtener el registro de archivos subidos
   getFileUploads() : Observable<any>{
     return this.http.get(this.baseURL)
   }
 
+  // Servicio para descargar alguno de los archivos subidos
   download(link: string) : Observable<any>{
     let params = new HttpParams();
     params = params.append('file', link);

@@ -1,5 +1,8 @@
+// @angular imports
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+
+// Imports propios
 import { PrintSpoolCsv } from '../models/print-spool-csv'
 
 @Component({
@@ -22,12 +25,15 @@ export class PrintSpoolComponent {
   
   ngOnInit() {
     
+    // Breadcrumb
     this.printSpoolPage = [{label:'Print Spool'}];
 
     this.home = {icon: 'pi pi-home'};
   }
 
   homeRedirect() {
+
+    // Breadcrumb navigation
     this.router.navigate(['']);
   }
 

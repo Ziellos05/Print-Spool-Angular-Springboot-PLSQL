@@ -1,6 +1,10 @@
+// @angular imports
 import { Component, OnInit } from '@angular/core';
+
+// PrimeNG imports
 import { ConfirmationService, MenuItem , MessageService } from 'primeng/api';
-import { DownloadService } from 'src/app/service/download.service';
+
+// Import propios
 import { PrintSpoolService } from 'src/app/service/print-spool.service';
 import { PrintSpoolCsv } from '../../models/print-spool-csv'
 import { SpoolConfig } from '../../models/spool-config'
@@ -15,19 +19,28 @@ interface Period {
 })
 export class PrintSpoolTableComponent {
 
+  // Array con la información de los spools de impresión
   printSpoolArray: PrintSpoolCsv[];
+
+  // Array para iterar con los ngFor en la tabla
   cols: any[];
 
+  // Objeto de tipo PrintSpoolCSV
   printSpool: PrintSpoolCsv;
 
+  // Objeto de tipo PrintSpoolCSV que señala al elemento seleccionado
   selectedPrintSpool: PrintSpoolCsv;
 
+  // Items de la barra de funciones
   items: MenuItem[];
   
+  // Boolean para mostrar o no el modal de generación
   displaySpoolDialog: boolean = false;
 
+  // Array que recibe los periodos hasta la fecha desde la API
   periods: any[] = [];
 
+  // Objeto que se envia a la API para generar el Print Spool
   spoolConfig: SpoolConfig = {
     date: "",
     stratum: false,
@@ -39,7 +52,6 @@ export class PrintSpoolTableComponent {
   blob: Blob;
 
   constructor(private printSpoolService : PrintSpoolService,
-    private downloadService : DownloadService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService) {
 
@@ -49,15 +61,16 @@ export class PrintSpoolTableComponent {
   this.displaySpoolDialog = true;
   }
 
+  // Función que llamada a la API para generar un Print Spool
   generatePrintSpool(generateButton: any){
     generateButton.disabled = true;
     this.printSpoolService.generatePrintSpool(this.spoolConfig).subscribe(
       (result:any)=>{
+        this.displaySpoolDialog = false;
+        generateButton.disabled = false;
         let printSpooCsv = result as PrintSpoolCsv;
         this.printSpoolArray.unshift(printSpooCsv)
         this.messageService.add({severity: 'success', summary: "Success", detail:"CSV print spool has been generated"});
-        this.displaySpoolDialog = false;
-        generateButton.disabled = false;
       },
       error => {
         console.log(error);
@@ -67,6 +80,7 @@ export class PrintSpoolTableComponent {
     );
   }
 
+  // Función que llama a la API para descargar un Print Spool
   downloadPrintSpool(){
     if(this.selectedPrintSpool! && this.selectedPrintSpool.id!) {
       this.printSpool = this.selectedPrintSpool;
@@ -101,6 +115,7 @@ export class PrintSpoolTableComponent {
 
   ngOnInit() {
 
+    // Obtención del historias de spools de impresión generados
     this.printSpoolService.getPrintSpools().subscribe(
       (result: any ) => {
         let printSpoolArray: PrintSpoolCsv[] = [];
@@ -115,6 +130,7 @@ export class PrintSpoolTableComponent {
       }
     );
 
+    // Obtención de los periodos a través de la API
     this.printSpoolService.getPeriods().subscribe(
       (result: any ) => {
         let periods: any[] = [];
@@ -129,6 +145,7 @@ export class PrintSpoolTableComponent {
       }
     );
 
+    // Actualización de las facturas hasta el día actual a través de la API
     this.printSpoolService.updateBills().subscribe(
       (result: any) => {
         this.messageService.add({severity: 'success', summary: "Success", detail:result});

@@ -1,7 +1,10 @@
-import { HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+// Imports de @angular
+import { Component } from '@angular/core';
+
+// Imports de PrimeNG
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { DownloadService } from 'src/app/service/download.service';
+
+// Imports propios
 import { UploadFileService } from 'src/app/service/upload-file.service';
 import { UploadFile } from '../../models/upload-file'
 
@@ -11,26 +14,32 @@ import { UploadFile } from '../../models/upload-file'
 })
 export class FileUploadTableComponent {
 
+  // Array de uploads para mostrat en la tabla
   uploadsArray: UploadFile[];
+
+  // Array de elementos para iterar con ngFor en la tabla
   cols: any[];
 
+  // Objeto de tipo UploadFile para manipular
   file: UploadFile;
 
+  // Objeto de tipo UploadFile que apunta al elemento seleccionado
   selectedFile: UploadFile = {
     id: 0,
     filename: "",
     created: ""
   }
   
+  // Menu de funciones para realizar sobre los file uploads
   items: MenuItem[];
 
+  // Boolean para mostrar o no el model de opciones para subir archivos
   displayUploadDialog: boolean = false;
 
   blob: Blob;
 
   constructor(private uploadFileService : UploadFileService,
     private messageService : MessageService,
-    private downloadService : DownloadService,
     private confirmationService : ConfirmationService) {
   }
 
@@ -38,6 +47,7 @@ export class FileUploadTableComponent {
     this.displayUploadDialog = true;
   }
 
+  // Función que llama a la API para descargar un archivo
   downloadFile(){
     if(this.selectedFile! && this.selectedFile.id!) {
       this.file = this.selectedFile;
@@ -69,6 +79,7 @@ export class FileUploadTableComponent {
     })
   };
 
+  // Función que llama a la API para subir un archivo y actualizar el registro
   onUpload(event: any, fileUpload: any) {
     this.displayUploadDialog = false; // Cierra la ventana de descarga :)
     fileUpload.clear(); // Limpia la ventana de subida
@@ -106,6 +117,7 @@ export class FileUploadTableComponent {
 
   ngOnInit() {
 
+    // Función que llama a la API para obtener todo el registro de archivos subidos
     this.uploadFileService.getFileUploads().subscribe(
       (result: any ) => {
         let uploadsArray: UploadFile[] = [];

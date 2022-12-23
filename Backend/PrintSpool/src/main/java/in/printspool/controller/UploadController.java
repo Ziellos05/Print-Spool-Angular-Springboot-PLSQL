@@ -36,6 +36,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+//CONTROLLER PARA LA SUBIDA Y DOCUMENTACIÓN DE ARCHIVOS
 @RestController
 @RequestMapping(value = "/upload")
 @Tag(name = "Upload", description = "Upload files and get history")
@@ -45,6 +46,9 @@ public class UploadController {
 	@Autowired
 	private UploadService uploadService;
 
+	/* Post para la subida de archivos
+	 * No funciona si el archivo pesa más de 10Mb y lanza error 413
+	 * No funciona si el archivo pesa más de 20Mb y lanza error por CORS */
 	@Operation(summary = "Uploads and updates info about file in database")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "File has been uploaded successfully", content = @Content),
@@ -89,6 +93,7 @@ public class UploadController {
 		}
 	}
 	
+	/* Get para descargar el archivo seleccionado */
 	@Operation(summary = "Download a file from the upload folder")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "File downloaded", content = @Content),

@@ -20,6 +20,7 @@ export class StratumComponent {
   
   ngOnInit() { 
 
+    // Breadcrumb
     this.stratumPage = [{label:'Stratum terms'}];
 
     this.home = {icon: 'pi pi-home'};

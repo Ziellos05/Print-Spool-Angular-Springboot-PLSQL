@@ -8,17 +8,26 @@ import { Stratum } from '../../models/stratum';
   templateUrl: './stratum-table.component.html'
 })
 export class StratumTableComponent implements OnInit {
+
+  // Array que recibe los estratos
   stratumArray: Stratum[];
+
+  // Array con información que permite iterar con ngFor para generar la tabla
   cols: any[];
 
+  // Items de la barra de funciones
   items: MenuItem[];
 
+  // Boolean para mostrar u ocultar el componente de guardar
   displaySaveDialog: boolean = false;
 
+  // Boolean para mostrar u ocultar el componente de editar
   displayEditDialog: boolean = false;
 
+  // Objeto de tipo estrato para realizar CRUD sobre los estratos
   stratum = new Stratum;
 
+  // Objeto de tipo estrato para los estratos seleccionados
   selectedStratum= new Stratum;
 
   constructor(private stratumService: StratumService,
@@ -40,6 +49,7 @@ export class StratumTableComponent implements OnInit {
     this.displayEditDialog = true;
   }
 
+  // Función que guarda un nuevo estrato
   saveStratum() {
     this.stratumService.saveStratum(this.stratum).subscribe(
       (result:any)=>{
@@ -60,6 +70,7 @@ export class StratumTableComponent implements OnInit {
     );
   }
 
+  // Funcióm que edita un estrato existente
   editStratum() {
     this.stratumService.editStratum(this.stratum).subscribe(
       (result:any)=>{
@@ -73,6 +84,7 @@ export class StratumTableComponent implements OnInit {
     );
   };
 
+  // Función que elimina un estrato
   deleteStratum(){
     if(this.selectedStratum! && this.selectedStratum.id!) {
       this.stratum = this.selectedStratum;
@@ -102,6 +114,7 @@ export class StratumTableComponent implements OnInit {
     })
   };
 
+  // Función que elimina el objeto en la tabla directamente, respuesta dinámica
   deleteObject(id:number){
     let index = this.stratumArray.findIndex((e) => e.id == id);
     if(index != -1) {

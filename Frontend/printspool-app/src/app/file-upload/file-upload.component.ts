@@ -1,5 +1,8 @@
+// @angular imports
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+
+// Imports propios
 import { UploadFile } from '../models/upload-file'
 
 @Component({

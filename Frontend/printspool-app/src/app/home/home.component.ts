@@ -20,11 +20,14 @@ export class HomeComponent {
   ){}
 
   ngOnInit() { 
+
+    // Breadcrumb
     this.homePage = [];
 
     this.home = {icon: 'pi pi-home'};
 }
 
+// Redirecciones a las funcionalidades para cada manager
   stratumRedirect() {
     this.router.navigate(['stratum']);
   }

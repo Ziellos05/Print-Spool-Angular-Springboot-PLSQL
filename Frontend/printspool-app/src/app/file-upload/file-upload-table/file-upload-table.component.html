@@ -1,7 +1,9 @@
 <div class="card">
+    <!-- Para mostrar mensajes posterior al uso de alguna fución en el aplicativo -->
     <p-toast></p-toast>
+    <!-- Diálogo de confirmación para la descarga de archivos -->
     <p-confirmDialog header="Download file" icon="pi pi-exclamation-triangle" acceptButtonStyleClass="p-button-danger" rejectButtonStyleClass="p-button-danger p-button-text"></p-confirmDialog>
-    <!-- p-panel -->
+    <!-- El div de abajo se puede reemplazar por p-panel para tener un formato distinto -->
     <div header="Uploads Manager" [style]="{width: '60%', height: '100%', margin: '0 auto'}">
         <div [style]="{'margin-top':'1%', 'margin-bottom':'1%'}">
             <p-menubar [model]="items"></p-menubar>
@@ -24,6 +26,7 @@
         </ng-template>
     </p-table>
 </div>
+<!-- Modal con componente interno que gestiona la subida de archivos -->
 <p-dialog header="Upload file" [(visible)]="displayUploadDialog" [modal]="true">
     <div>
         <p-fileUpload name="file" #fileUpload url="http://localhost:8080/upload" (onError)="onUpload($event, fileUpload)" chooseStyleClass="p-button-danger p-button-text" uploadStyleClass="p-button-danger" cancelStyleClass="p-button-danger p-button-text" removeStyleClass="p-button-danger"></p-fileUpload>

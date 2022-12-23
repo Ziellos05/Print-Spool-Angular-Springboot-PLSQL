@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import in.printspool.model.Upload;
 import in.printspool.repository.UploadRepository;
@@ -21,6 +22,7 @@ public class UploadService implements UploadRepository {
 	
 	// Query nativa de Oracle para actualizar un registro para cada archivo subido
 	@Override
+	@Transactional
 	public int saveUpload(String filename) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime currentTime = LocalDateTime.now();
@@ -30,6 +32,7 @@ public class UploadService implements UploadRepository {
 	
 	// Query para obtener los datos sobre los archivos subidos
 	@Override
+	@Transactional(readOnly=true)
 	public List<Upload> getUploads() {
 		return jdbcTemplate.query("SELECT ID, FILENAME, CREATED "
 				+ "FROM APP_DATOS_IMPRESION.UPLOADS ORDER BY ID DESC", 
@@ -39,6 +42,7 @@ public class UploadService implements UploadRepository {
 	
 	// Query para obtener los datos sobre los archivos subidos
 	@Override
+	@Transactional(readOnly=true)
 	public List<Upload> getUploadByFilename(String filename) {
 		return jdbcTemplate.query("SELECT ID, FILENAME, CREATED "
 				+ "FROM APP_DATOS_IMPRESION.UPLOADS WHERE FILENAME = ?", 

@@ -217,6 +217,7 @@ public class PrintSpoolController {
 		}
 	}
 	
+	/* Get para descargar el archivo .CSV del print spool seleccionado */
 	@Operation(summary = "Download a plain text file with the print spool data")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "File downloaded", content = @Content),

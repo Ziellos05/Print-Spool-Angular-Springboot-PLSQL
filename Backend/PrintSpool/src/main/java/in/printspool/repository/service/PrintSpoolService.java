@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import in.printspool.model.PrintSpool;
 import in.printspool.model.PrintSpoolCsv;
@@ -19,6 +20,10 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
+	/* Los Strings "standardQuery1" y "standardQuery2" al concatenarse, hacen la petición para 
+	 * generar el print spool sin estratos, consumo promedio o últimos consumos, se utilizan los
+	 * Strings "S", "A" y "L" para hacer peticiones dinámicas insertándolos entre los dos Strings
+	 * principales */
 	String standardQuery1 = "SELECT b.ID, "
 			+ "TO_CHAR(b.PAYMENT_DUE, 'DD-MM-YYYY')"
 			+ "AS PAYMENTDUE, "
@@ -51,6 +56,7 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	 * los campos requeridos, se utiliza JDBC para poder enviar queries
 	 * complejas a la base de datos Oracle*/
 	@Override
+	@Transactional(readOnly=true)
 	public List<PrintSpool> getPrintSpoolSAL(SpoolConfig spoolConfig) {
 		
 		return jdbcTemplate.query(standardQuery1+S+A+L+standardQuery2, 
@@ -108,9 +114,10 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	}
 	
 	/* Esta función inserta la información sobre el CSV generado en una tabla para poder hacer 
-	 * seguimiento del archivo */
+	 * seguimiento del archivo y devuelve el registro generado */
 	
 	@Override
+	@Transactional
 	public List<PrintSpoolCsv> printSpoolCsv(String filename, String dateCreation, String period, String code) {
 		jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (FILENAME, CREATED, PERIOD_ID, CODE) "
 				+ "SELECT ?, ?, p2.ID, ?	"
@@ -127,6 +134,7 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	
 	/* Get para obtener la lista de todos los archivos creados en formato .CSV */
 	@Override
+	@Transactional(readOnly=true)
 	public List<PrintSpoolCsv> getPrintSpoolCsv() {
 		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
 				+ "FROM APP_DATOS_IMPRESION.PRINTSPOOLS p "

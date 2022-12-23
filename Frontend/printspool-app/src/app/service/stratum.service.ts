@@ -12,10 +12,12 @@ export class StratumService {
 
   constructor(private http:HttpClient) { }
 
+  // Servicio para obtener todos los estratos
   getStratums() : Observable<any>{
     return this.http.get(this.baseURL)
   }
 
+  // Servicio para guardar estratos nuevos
   saveStratum(stratum: Stratum): Observable<any>{
 
     let headers = new HttpHeaders();
@@ -25,6 +27,7 @@ export class StratumService {
     return this.http.post(this.baseURL, JSON.stringify(stratum), {headers: headers});
   }
 
+  // Servicio para editar el estrato
   editStratum(stratum: Stratum): Observable<any>{
 
     let headers = new HttpHeaders();
@@ -34,6 +37,7 @@ export class StratumService {
     return this.http.put(this.baseURL+"/"+stratum.id, JSON.stringify(stratum), {headers: headers});
   }
 
+  // Servicio para eliminar el estrato
   deleteStratum(id: number) : Observable<any>{
     return this.http.delete(this.baseURL+"/"+id, { responseType: 'text' });
   }

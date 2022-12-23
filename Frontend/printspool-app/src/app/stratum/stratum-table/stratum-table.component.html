@@ -1,11 +1,15 @@
 <div class="card">
+    <!-- Mensajes generados al realizar alguna funcionalidad -->
     <p-toast></p-toast>
+    <!-- Dialog de alerta previo a la descarga de un estrato -->
     <p-confirmDialog header="Delete stratum" icon="pi pi-exclamation-triangle" acceptButtonStyleClass="p-button-danger" rejectButtonStyleClass="p-button-danger p-button-text"></p-confirmDialog>
-    <!-- p-panel -->
+    <!-- El div de abajo se puede reemplazar por p-panel -->
     <div header="Stratum Manager" [style]="{width: '60%', height: '100%', margin: '0 auto'}">
+        <!-- Menubar de funciones para el CRUD de estratos -->
         <div [style]="{'margin-top':'1%', 'margin-bottom':'1%'}">
             <p-menubar [model]="items"></p-menubar>
         </div>
+    <!-- Tabla para visualizar y seleccionar los estratos -->
     <p-table [value]="stratumArray" [scrollable]="true" scrollHeight="17.5rem" selectionMode="single" [(selection)]="selectedStratum" dataKey="id" styleClass="p-datatable-sm" 
     [tableStyle]="{'width': '100%', 'margin': 'auto'}" [columns]="cols" [paginator]="true" [rows]="6">
         <ng-template pTemplate="header" let-columns>
@@ -27,6 +31,7 @@
 
 <!-- AQUÍ SE AGREGA UNO NUEVO-->
 
+<!-- Modal con form para crear un nuevo estrato -->
 <p-dialog header="New stratum" [(visible)]="displaySaveDialog" [modal]="true">
     <div>
         <div class="ui-g-12">
@@ -63,6 +68,7 @@
 
 <!-- EDITOR DE ESTRATOS AQUÍ -->
 
+<!-- Modal con form para editar un estrato existente -->
 <p-dialog header="Edit stratum" [(visible)]="displayEditDialog" [modal]="true">
     <div>
         <div class="ui-g-12">

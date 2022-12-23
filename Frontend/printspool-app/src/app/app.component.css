@@ -1,0 +1,5 @@
+/* Fuente y tamaño de la letra */
+:host {
+    font-family: "Roboto", "Segoe UI Symbol";
+    font-size: 16px;
+  }
