@@ -1,17 +1,17 @@
 /* Uso de estilos para asemejarse al footer usado por Davivienda en su web page */
 footer {
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 9%;
-    background-color: #111111;
-    color: white;
-    text-align: center;
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    line-height: 20px;
-  }
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 9%;
+  background-color: #111111;
+  color: white;
+  text-align: center;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  line-height: 20px;
+}

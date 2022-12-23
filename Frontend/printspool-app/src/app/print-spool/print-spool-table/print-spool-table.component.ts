@@ -2,12 +2,12 @@
 import { Component, OnInit } from '@angular/core';
 
 // PrimeNG imports
-import { ConfirmationService, MenuItem , MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 
 // Import propios
 import { PrintSpoolService } from 'src/app/service/print-spool.service';
-import { PrintSpoolCsv } from '../../models/print-spool-csv'
-import { SpoolConfig } from '../../models/spool-config'
+import { PrintSpoolCsv } from '../../models/print-spool-csv';
+import { SpoolConfig } from '../../models/spool-config';
 
 interface Period {
   date: string;
@@ -15,10 +15,9 @@ interface Period {
 
 @Component({
   selector: 'app-print-spool-table',
-  templateUrl: './print-spool-table.component.html'
+  templateUrl: './print-spool-table.component.html',
 })
 export class PrintSpoolTableComponent {
-
   // Array con la información de los spools de impresión
   printSpoolArray: PrintSpoolCsv[];
 
@@ -33,7 +32,7 @@ export class PrintSpoolTableComponent {
 
   // Items de la barra de funciones
   items: MenuItem[];
-  
+
   // Boolean para mostrar o no el modal de generación
   displaySpoolDialog: boolean = false;
 
@@ -42,82 +41,102 @@ export class PrintSpoolTableComponent {
 
   // Objeto que se envia a la API para generar el Print Spool
   spoolConfig: SpoolConfig = {
-    date: "",
+    date: '',
     stratum: false,
     avgConsumption: false,
     lastConsumption: false,
-    nconsumptions: 1
-  }
+    nconsumptions: 1,
+  };
 
   blob: Blob;
 
-  constructor(private printSpoolService : PrintSpoolService,
+  constructor(
+    private printSpoolService: PrintSpoolService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService) {
+    private confirmationService: ConfirmationService
+  ) {}
 
-  }
-
-  showSpoolDialog(){
-  this.displaySpoolDialog = true;
+  showSpoolDialog() {
+    this.displaySpoolDialog = true;
   }
 
   // Función que llamada a la API para generar un Print Spool
-  generatePrintSpool(generateButton: any){
+  generatePrintSpool(generateButton: any) {
     generateButton.disabled = true;
     this.printSpoolService.generatePrintSpool(this.spoolConfig).subscribe(
-      (result:any)=>{
+      (result: any) => {
         this.displaySpoolDialog = false;
         generateButton.disabled = false;
         let printSpooCsv = result as PrintSpoolCsv;
-        this.printSpoolArray.unshift(printSpooCsv)
-        this.messageService.add({severity: 'success', summary: "Success", detail:"CSV print spool has been generated"});
+        this.printSpoolArray.unshift(printSpooCsv);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'CSV print spool has been generated',
+        });
       },
-      error => {
+      (error) => {
         console.log(error);
-        this.messageService.add({severity: 'error', summary: 'Internal Error', detail: ''});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Internal Error',
+          detail: '',
+        });
         this.displaySpoolDialog = false;
       }
     );
   }
 
   // Función que llama a la API para descargar un Print Spool
-  downloadPrintSpool(){
-    if(this.selectedPrintSpool! && this.selectedPrintSpool.id!) {
+  downloadPrintSpool() {
+    if (this.selectedPrintSpool! && this.selectedPrintSpool.id!) {
       this.printSpool = this.selectedPrintSpool;
     } else {
-      this.messageService.add({severity : 'warn', summary: "Warning!", detail: "Select a register first"})
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning!',
+        detail: 'Select a register first',
+      });
       return;
     }
     this.confirmationService.confirm({
-      message: "Are you sure do you want to download this Print Spool?",
+      message: 'Are you sure do you want to download this Print Spool?',
       accept: () => {
+        this.printSpoolService
+          .download(this.selectedPrintSpool.filename)
+          .subscribe(
+            (data) => {
+              this.blob = new Blob([data]);
 
-        this.printSpoolService.download(this.selectedPrintSpool.filename).subscribe((data) => {
-
-          this.blob = new Blob([data]);
-        
-          var downloadURL = window.URL.createObjectURL(data);
-          var link = document.createElement('a');
-          link.href = downloadURL;
-          link.download = this.selectedPrintSpool.filename;
-          link.click();
-          this.messageService.add({severity: 'success', summary: "Success", detail:"Download has started"});
-        },
-        error => {
-          console.log(error);
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Download has failed'});
-          this.displaySpoolDialog = false;
-        });
-
-      }
-    })
-  };
+              var downloadURL = window.URL.createObjectURL(data);
+              var link = document.createElement('a');
+              link.href = downloadURL;
+              link.download = this.selectedPrintSpool.filename;
+              link.click();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Download has started',
+              });
+            },
+            (error) => {
+              console.log(error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Download has failed',
+              });
+              this.displaySpoolDialog = false;
+            }
+          );
+      },
+    });
+  }
 
   ngOnInit() {
-
     // Obtención del historias de spools de impresión generados
     this.printSpoolService.getPrintSpools().subscribe(
-      (result: any ) => {
+      (result: any) => {
         let printSpoolArray: PrintSpoolCsv[] = [];
         for (let i = 0; i < result.length; i++) {
           let printSpoolCSV = result[i] as PrintSpoolCsv;
@@ -125,14 +144,14 @@ export class PrintSpoolTableComponent {
         }
         this.printSpoolArray = printSpoolArray;
       },
-      error => {
+      (error) => {
         console.log(error);
       }
     );
 
     // Obtención de los periodos a través de la API
     this.printSpoolService.getPeriods().subscribe(
-      (result: any ) => {
+      (result: any) => {
         let periods: any[] = [];
         for (let i = 0; i < result.length; i++) {
           let period = result[i].monthYear as string;
@@ -140,7 +159,7 @@ export class PrintSpoolTableComponent {
         }
         this.periods = periods;
       },
-      error => {
+      (error) => {
         console.log(error);
       }
     );
@@ -148,11 +167,19 @@ export class PrintSpoolTableComponent {
     // Actualización de las facturas hasta el día actual a través de la API
     this.printSpoolService.updateBills().subscribe(
       (result: any) => {
-        this.messageService.add({severity: 'success', summary: "Success", detail:result});
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: result,
+        });
       },
-      error => {
+      (error) => {
         console.log(error);
-        this.messageService.add({severity: 'error', summary: 'Internal Error', detail: ''});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Internal Error',
+          detail: '',
+        });
       }
     );
 
@@ -160,21 +187,19 @@ export class PrintSpoolTableComponent {
       {
         label: 'Generate',
         icon: 'pi pi-file',
-        command: () => this.showSpoolDialog()
+        command: () => this.showSpoolDialog(),
       },
       {
         label: 'Download',
         icon: 'pi pi-download',
-        command: () => this.downloadPrintSpool()
-      }
+        command: () => this.downloadPrintSpool(),
+      },
     ];
 
     this.cols = [
-      {field: "period", header: "Period"},
-      {field: "code", header: "Code"},
-      {field: "created", header: "Created"},
+      { field: 'period', header: 'Period' },
+      { field: 'code', header: 'Code' },
+      { field: 'created', header: 'Created' },
     ];
-
-  };
-
+  }
 }

@@ -24,8 +24,8 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	 * generar el print spool sin estratos, consumo promedio o últimos consumos, se utilizan los
 	 * Strings "S", "A" y "L" para hacer peticiones dinámicas insertándolos entre los dos Strings
 	 * principales */
-	String standardQuery1 = "SELECT b.ID, "
-			+ "TO_CHAR(b.PAYMENT_DUE, 'DD-MM-YYYY')"
+	String standardQuery1 = "SELECT /*+ INDEX BILLS_ID_IDX ON APP_DATOS_IMPRESION.BILLS (ID) */ b.ID, "
+			+ "TO_CHAR(b.PAYMENT_DUE, 'DD-MM-YYYY') "
 			+ "AS PAYMENTDUE, "
 			+ "b.AMOUNT, "
 			+ "c.NAME, "
@@ -119,12 +119,12 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	@Override
 	@Transactional
 	public List<PrintSpoolCsv> printSpoolCsv(String filename, String dateCreation, String period, String code) {
-		jdbcTemplate.update("INSERT INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (FILENAME, CREATED, PERIOD_ID, CODE) "
+		jdbcTemplate.update("INSERT  /*+APPEND*/ INTO APP_DATOS_IMPRESION.PRINTSPOOLS p (FILENAME, CREATED, PERIOD_ID, CODE) "
 				+ "SELECT ?, ?, p2.ID, ?	"
 				+ "FROM APP_DATOS_IMPRESION.PERIODS p2	"
 				+ "WHERE p2.MONTH_YEAR = ?", 
 				new Object [] {filename, dateCreation, code, period});
-		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
+		return jdbcTemplate.query("SELECT /*+ INDEX PRINTSPOOLS_PERIOD_ID_IDX ON APP_DATOS_IMPRESION.PRINTSPOOLS (PERIOD_ID) */ p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
 				+ "FROM APP_DATOS_IMPRESION.PRINTSPOOLS p "
 				+ "INNER JOIN APP_DATOS_IMPRESION.PERIODS p2 "
 				+ "ON p2.ID = p.PERIOD_ID WHERE p.FILENAME = ?", 
@@ -136,7 +136,7 @@ public class PrintSpoolService implements PrintSpoolRepository {
 	@Override
 	@Transactional(readOnly=true)
 	public List<PrintSpoolCsv> getPrintSpoolCsv() {
-		return jdbcTemplate.query("SELECT p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
+		return jdbcTemplate.query("SELECT /*+ INDEX PRINTSPOOLS_PERIOD_ID_IDX ON APP_DATOS_IMPRESION.PRINTSPOOLS (PERIOD_ID) */  p.ID, p2.MONTH_YEAR as PERIOD, p.FILENAME, p.CREATED, p.CODE "
 				+ "FROM APP_DATOS_IMPRESION.PRINTSPOOLS p "
 				+ "INNER JOIN APP_DATOS_IMPRESION.PERIODS p2 "
 				+ "ON p2.ID = p.PERIOD_ID ORDER BY p.ID DESC", 

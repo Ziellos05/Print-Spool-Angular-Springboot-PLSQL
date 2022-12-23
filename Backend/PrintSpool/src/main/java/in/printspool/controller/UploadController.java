@@ -40,49 +40,50 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping(value = "/upload")
 @Tag(name = "Upload", description = "Upload files and get history")
-@CrossOrigin({"*"})
+@CrossOrigin({ "*" })
 public class UploadController {
-	
+
 	@Autowired
 	private UploadService uploadService;
 
-	/* Post para la subida de archivos
-	 * No funciona si el archivo pesa más de 10Mb y lanza error 413
-	 * No funciona si el archivo pesa más de 20Mb y lanza error por CORS */
+	/*
+	 * Post para la subida de archivos No funciona si el archivo pesa más de 10Mb y
+	 * lanza error 413 No funciona si el archivo pesa más de 20Mb y lanza error por
+	 * CORS
+	 */
 	@Operation(summary = "Uploads and updates info about file in database")
-	@ApiResponses(value = { 
+	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "File has been uploaded successfully", content = @Content),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
 			@ApiResponse(responseCode = "409", description = "Conflict", content = @Content),
-			@ApiResponse(responseCode = "413", description = "Payload too large, forbidden >10MB files", content = @Content)})
+			@ApiResponse(responseCode = "413", description = "Payload too large, forbidden >10MB files", content = @Content) })
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   private ResponseEntity<String> fileUpload(@RequestParam("file") MultipartFile file) throws Exception {
-		if (file.getSize()>10000000) {
+	private ResponseEntity<String> fileUpload(@RequestParam("file") MultipartFile file) throws Exception {
+		if (file.getSize() > 10000000) {
 			return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).build();
 		}
 		List<Upload> selected = uploadService.getUploadByFilename(file.getOriginalFilename());
 		if (selected.size() != 0) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
-	   try {
-		   String filename=file.getOriginalFilename();
-		   File convertFile = new File("src/main/resources/upload/"+filename);
-		   convertFile.createNewFile();
-		   FileOutputStream fout = new FileOutputStream(convertFile);
-		   fout.write(file.getBytes());
-		   fout.close();
-		   uploadService.saveUpload(filename);
-		   return ResponseEntity.ok("File is upload successfully");
-	   } catch (Exception e) {
-		   return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-	   } 
-   }
-	
+		try {
+			String filename = file.getOriginalFilename();
+			File convertFile = new File("src/main/resources/upload/" + filename);
+			convertFile.createNewFile();
+			FileOutputStream fout = new FileOutputStream(convertFile);
+			fout.write(file.getBytes());
+			fout.close();
+			uploadService.saveUpload(filename);
+			return ResponseEntity.ok("File is upload successfully");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+	}
+
 	/* Get para obtener la lista de todos los archivos subidos */
 	@Operation(summary = "Get the whole data about the uploaded files")
-	@ApiResponses(value = { 
-			@ApiResponse(responseCode = "200", description = "Update files obtained", content = {
-					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Upload.class))) }),
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Update files obtained", content = {
+			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Upload.class))) }),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@GetMapping
 	private ResponseEntity<List<Upload>> getUploads() throws Exception {
@@ -92,28 +93,24 @@ public class UploadController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
-	
+
 	/* Get para descargar el archivo seleccionado */
 	@Operation(summary = "Download a file from the upload folder")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "File downloaded", content = @Content),
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "File downloaded", content = @Content),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
-    @GetMapping(value = "/download")
-    public ResponseEntity<Resource> downloadUploaded(@RequestParam("file") String filename) throws IOException {
-        File file = new File("src/main/resources/upload/"+filename);
-        String newFileName = (filename);
-        HttpHeaders header = new HttpHeaders();
-        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+newFileName);
-        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        header.add("Pragma", "no-cache");
-        header.add("Expires", "0");
-        Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+	@GetMapping(value = "/download")
+	public ResponseEntity<Resource> downloadUploaded(@RequestParam("file") String filename) throws IOException {
+		File file = new File("src/main/resources/upload/" + filename);
+		String newFileName = (filename);
+		HttpHeaders header = new HttpHeaders();
+		header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + newFileName);
+		header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		header.add("Pragma", "no-cache");
+		header.add("Expires", "0");
+		Path path = Paths.get(file.getAbsolutePath());
+		ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
-        return ResponseEntity.ok()
-                .headers(header)
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("multipart/form-data"))
-                .body(resource);
-    }
+		return ResponseEntity.ok().headers(header).contentLength(file.length())
+				.contentType(MediaType.parseMediaType("multipart/form-data")).body(resource);
+	}
 }

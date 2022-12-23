@@ -1,7 +1,6 @@
 /* Estilo para distribuir horizontalmente las cards en la página de inicio */
 .cards {
-    display: flex;
-    justify-content: space-around;
-    align-items: center
-  }
-  
+  display: flex;
+  justify-content: space-around;
+  align-items: center
+}

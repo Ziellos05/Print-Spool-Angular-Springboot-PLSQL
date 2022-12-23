@@ -16,14 +16,14 @@ import in.printspool.repository.StratumRepository;
 // Servicio encargado del CRUD de los estrados, utiliza JPA
 @Service
 public class PeriodService {
-	
+
 	@Autowired
 	private PeriodRepository periodRepository;
-	
+
 	// Obtiene todos los periodos actualmente en la base de datos
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public List<Period> getAllPeriods() {
 		return periodRepository.findAll(Sort.by("id").descending());
 	}
-	
+
 }

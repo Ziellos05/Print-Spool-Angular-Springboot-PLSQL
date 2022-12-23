@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SpoolConfig {
-	
+
 	@NotNull
 	private String date;
 	private boolean stratum;
 	private boolean avgConsumption;
 	private boolean lastConsumption;
 	private int nConsumptions;
-	
+
 }

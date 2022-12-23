@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table
 public class PrintSpool {
-	
+
 	@Id
 	@NotNull
 	private Long id;
-	
+
 	@NotNull
 	private String paymentDue;
 

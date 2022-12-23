@@ -10,7 +10,6 @@ import in.printspool.model.Period;
 import in.printspool.model.Stratum;
 
 // Interface que es implementada por el servicio de estratos
-public interface PeriodRepository extends JpaRepository<Period, Long>{
-	
+public interface PeriodRepository extends JpaRepository<Period, Long> {
 
 }

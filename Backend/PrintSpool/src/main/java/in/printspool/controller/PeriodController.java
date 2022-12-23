@@ -32,17 +32,16 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 @RestController
 @RequestMapping("/period")
 @Tag(name = "Period", description = "Period getter")
-@CrossOrigin({"*"})
+@CrossOrigin({ "*" })
 public class PeriodController {
 
 	@Autowired
 	private PeriodService periodService;
 
 	// GET para obtener todos estratos
-	@Operation(summary = "Get all periods", hidden= true)
-	@ApiResponses(value = { 
-			@ApiResponse(responseCode = "200", description = "Periods obtained", content = {
-					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Period.class))) }),
+	@Operation(summary = "Get all periods", hidden = true)
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Periods obtained", content = {
+			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Period.class))) }),
 			@ApiResponse(responseCode = "400", description = "Bad request", content = @Content) })
 	@GetMapping
 	private ResponseEntity<List<Period>> getAllPeriods() {

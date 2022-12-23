@@ -1,23 +1,23 @@
 /* Estilos para el header de la página, especial énfasis en los colores usando 
-la paleta de colores de Davivienda */  
+la paleta de colores de Davivienda */
 
-  .spacer {
-    flex: 1;
-  }
+.spacer {
+  flex: 1;
+}
 
-  .toolbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 12%;
-    display: flex;
-    align-items: center;
-    background-color: #ED1C27;
-    color: white;
-    font-weight: 600;
-  }
+.toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12%;
+  display: flex;
+  align-items: center;
+  background-color: #ED1C27;
+  color: white;
+  font-weight: 600;
+}
 
-  .toolbar img {
-    margin: 0 16px;
-  }
+.toolbar img {
+  margin: 0 16px;
+}

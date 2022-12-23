@@ -19,28 +19,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "PRINTSPOOLS", schema = "APP_DATOS_IMPRESION")
 public class PrintSpoolCsv {
-	
+
 	@Id
 	@NotNull
-	@Column (name = "ID")
+	@Column(name = "ID")
 	private Long id;
-	 
-	@Column (name = "PERIOD")
+
+	@Column(name = "PERIOD")
 	@NotNull
 	private String period;
-	
-	@Column (name = "FILENAME")
+
+	@Column(name = "FILENAME")
 	@NotNull
 	private String filename;
-	
-	@Column (name = "CREATED")
+
+	@Column(name = "CREATED")
 	@NotNull
 	private String created;
-	
-	@Column (name = "CODE")
+
+	@Column(name = "CODE")
 	@NotNull
 	private String code;
-	
 
 }
-

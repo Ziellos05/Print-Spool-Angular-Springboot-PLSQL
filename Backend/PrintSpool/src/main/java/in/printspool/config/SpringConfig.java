@@ -14,11 +14,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
 // Anotación que permite el uso de Scheduler de Springboot
 @EnableScheduling
 // Anotación que permite configurar el doc de swagger-ui generado
-@OpenAPIDefinition(servers = { @Server(url = "http://localhost:8080") },
-info = @Info(title = "Print Spool Manager", 
-						version = "1.0.0",
-						contact = @Contact(url = "https://github.com/Ziellos05", name = "Roland Ortega", email = "roland.ortega@segurosbolivar.com"),
-						description = "This API generates the periodic print spool for a water supply network company, in addition it updates the terms and conditions of any stratum."))
+@OpenAPIDefinition(servers = {
+		@Server(url = "http://localhost:8080") }, info = @Info(title = "Print Spool Manager", version = "1.0.0", contact = @Contact(url = "https://github.com/Ziellos05", name = "Roland Ortega", email = "roland.ortega@segurosbolivar.com"), description = "This API generates the periodic print spool for a water supply network company, in addition it updates the terms and conditions of any stratum."))
 public class SpringConfig {
 
 }

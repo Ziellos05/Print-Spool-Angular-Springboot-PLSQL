@@ -5,10 +5,9 @@ import { Stratum } from '../../models/stratum';
 
 @Component({
   selector: 'app-stratum-table',
-  templateUrl: './stratum-table.component.html'
+  templateUrl: './stratum-table.component.html',
 })
 export class StratumTableComponent implements OnInit {
-
   // Array que recibe los estratos
   stratumArray: Stratum[];
 
@@ -25,46 +24,64 @@ export class StratumTableComponent implements OnInit {
   displayEditDialog: boolean = false;
 
   // Objeto de tipo estrato para realizar CRUD sobre los estratos
-  stratum = new Stratum;
+  stratum = new Stratum();
 
   // Objeto de tipo estrato para los estratos seleccionados
-  selectedStratum= new Stratum;
+  selectedStratum = new Stratum();
 
-  constructor(private stratumService: StratumService,
+  constructor(
+    private stratumService: StratumService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService) {}
+    private confirmationService: ConfirmationService
+  ) {}
 
   showSaveDialog() {
-    this.stratum = new Stratum;
+    this.stratum = new Stratum();
     this.displaySaveDialog = true;
   }
 
   showEditDialog() {
-      if(this.selectedStratum! && this.selectedStratum.id!) {
-        this.stratum = this.selectedStratum;
-      } else {
-        this.messageService.add({severity : 'warn', summary: "Warning!", detail: "Select a register first"})
-        return;
-      }
+    if (this.selectedStratum! && this.selectedStratum.id!) {
+      this.stratum = this.selectedStratum;
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning!',
+        detail: 'Select a register first',
+      });
+      return;
+    }
     this.displayEditDialog = true;
   }
 
   // Función que guarda un nuevo estrato
   saveStratum() {
     this.stratumService.saveStratum(this.stratum).subscribe(
-      (result:any)=>{
+      (result: any) => {
         let stratum = result as Stratum;
-        this.stratumArray.push(stratum)
-        this.messageService.add({severity: 'success', summary: "Success", detail:"Stratum has been added"});
+        this.stratumArray.push(stratum);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Stratum has been added',
+        });
         this.displaySaveDialog = false;
       },
-      error => {
+      (error) => {
         if (error.status == 409) {
-          this.messageService.add({severity: 'warn', summary: "Warning!", detail:"This stratum already exist!"});
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Warning!',
+            detail: 'This stratum already exist!',
+          });
           console.log(error);
         } else {
-        this.messageService.add({severity: 'error', summary: "Internal Error", detail:""});
-        console.log(error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Internal Error',
+            detail: '',
+          });
+          console.log(error);
         }
       }
     );
@@ -73,51 +90,75 @@ export class StratumTableComponent implements OnInit {
   // Funcióm que edita un estrato existente
   editStratum() {
     this.stratumService.editStratum(this.stratum).subscribe(
-      (result:any)=>{
-        this.messageService.add({severity: 'success', summary: "Success", detail:"Stratum has been edited"});
+      (result: any) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Stratum has been edited',
+        });
         this.displayEditDialog = false;
       },
-      error => {
-        this.messageService.add({severity: 'error', summary: "Internal Error", detail:""});
+      (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Internal Error',
+          detail: '',
+        });
         console.log(error);
       }
     );
-  };
+  }
 
   // Función que elimina un estrato
-  deleteStratum(){
-    if(this.selectedStratum! && this.selectedStratum.id!) {
+  deleteStratum() {
+    if (this.selectedStratum! && this.selectedStratum.id!) {
       this.stratum = this.selectedStratum;
     } else {
-      this.messageService.add({severity : 'warn', summary: "Warning!", detail: "Select a register first"})
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning!',
+        detail: 'Select a register first',
+      });
       return;
     }
-    if(this.selectedStratum.id < 7) {
-      this.messageService.add({severity : 'warn', summary: "Warning!", detail: "You can't delete this stratum!"})
+    if (this.selectedStratum.id < 7) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning!',
+        detail: "You can't delete this stratum!",
+      });
       return;
     }
     this.confirmationService.confirm({
-      message: "Are you sure do you want to delete this stratum?",
+      message: 'Are you sure do you want to delete this stratum?',
       accept: () => {
         this.stratumService.deleteStratum(this.stratum.id).subscribe(
           (result: any) => {
-            this.messageService.add({severity: 'success', summary: "Success", detail:result});
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: result,
+            });
             this.deleteObject(this.stratum.id);
-            this.selectedStratum = new Stratum;
+            this.selectedStratum = new Stratum();
           },
-          error => {
-            this.messageService.add({severity: 'error', summary: "Internal Error", detail:""});
+          (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Internal Error',
+              detail: '',
+            });
             console.log(error);
           }
-        )
-      }
-    })
-  };
+        );
+      },
+    });
+  }
 
   // Función que elimina el objeto en la tabla directamente, respuesta dinámica
-  deleteObject(id:number){
+  deleteObject(id: number) {
     let index = this.stratumArray.findIndex((e) => e.id == id);
-    if(index != -1) {
+    if (index != -1) {
       this.stratumArray.splice(index, 1);
     }
   }
@@ -151,15 +192,14 @@ export class StratumTableComponent implements OnInit {
       {
         label: 'Delete',
         icon: 'pi pi-fw pi-times',
-        command: () => this.deleteStratum()
+        command: () => this.deleteStratum(),
       },
     ];
 
     this.cols = [
-      {field: "id", header: "Stratum"},
-      {field: "costPerCm", header: "Cost per CM"},
-      {field: "businessDays", header: "Business days"},
+      { field: 'id', header: 'Stratum' },
+      { field: 'costPerCm', header: 'Cost per CM' },
+      { field: 'businessDays', header: 'Business days' },
     ];
-
   }
 }

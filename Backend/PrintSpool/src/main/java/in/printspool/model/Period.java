@@ -17,15 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "PERIODS", schema = "APP_DATOS_IMPRESION")
 public class Period {
-	
+
 	@Id
 	@NotNull
-	@Column (name = "ID")
+	@Column(name = "ID")
 	private Long id;
-	 
-	@Column (name = "MONTH_YEAR")
+
+	@Column(name = "MONTH_YEAR")
 	@NotNull
 	private String monthYear;
-	
 
 }

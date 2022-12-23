@@ -10,14 +10,14 @@ import { StratumComponent } from './stratum/stratum.component';
 
 // Routes para las funcionalidades organizadas por estratos, spools de impresión y subida de archivos
 const routes: Routes = [
-  {path:'', component: HomeComponent},
-  {path:'stratum', component: StratumComponent},
-  {path:'printspool', component: PrintSpoolComponent},
-  {path:'fileupload', component: FileUploadComponent}
+  { path: '', component: HomeComponent },
+  { path: 'stratum', component: StratumComponent },
+  { path: 'printspool', component: PrintSpoolComponent },
+  { path: 'fileupload', component: FileUploadComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,33 +1,29 @@
 import { Component } from '@angular/core';
-import {MenuItem} from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
-
   // @ts-ignore
   homePage: MenuItem[];
 
   // @ts-ignore
   home: MenuItem;
 
-  constructor(
-    private router: Router
-  ){}
+  constructor(private router: Router) {}
 
-  ngOnInit() { 
-
+  ngOnInit() {
     // Breadcrumb
     this.homePage = [];
 
-    this.home = {icon: 'pi pi-home'};
-}
+    this.home = { icon: 'pi pi-home' };
+  }
 
-// Redirecciones a las funcionalidades para cada manager
+  // Redirecciones a las funcionalidades para cada manager
   stratumRedirect() {
     this.router.navigate(['stratum']);
   }
@@ -39,5 +35,4 @@ export class HomeComponent {
   uploadRedirect() {
     this.router.navigate(['fileupload']);
   }
-
 }

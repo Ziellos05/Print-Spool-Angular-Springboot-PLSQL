@@ -1,61 +1,125 @@
 <div class="card">
-    <!-- Generador de mensajes al realizar operaciones -->
-    <p-toast></p-toast>
-    <!-- Diálogo de confirmación para la descarga de archivos -->
-    <p-confirmDialog header="Download print spool" icon="pi pi-exclamation-triangle" acceptButtonStyleClass="p-button-danger" rejectButtonStyleClass="p-button-danger p-button-text"></p-confirmDialog>
-    <!-- Se puede reemplazar el div de abajo p-panel -->
-    <div header="Print Spool Manager" [style]="{width: '60%', height: '100%', margin: '0 auto'}">
-        <!-- Menubar con las funciones de generar y descargar -->
-        <div [style]="{'margin-top':'1%', 'margin-bottom':'1%'}">
-            <p-menubar [model]="items"></p-menubar>
-        </div>
+  <!-- Generador de mensajes al realizar operaciones -->
+  <p-toast></p-toast>
+  <!-- Diálogo de confirmación para la descarga de archivos -->
+  <p-confirmDialog
+    header="Download print spool"
+    icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-danger"
+    rejectButtonStyleClass="p-button-danger p-button-text"
+  ></p-confirmDialog>
+  <!-- Se puede reemplazar el div de abajo p-panel -->
+  <div
+    header="Print Spool Manager"
+    [style]="{ width: '60%', height: '100%', margin: '0 auto' }"
+  >
+    <!-- Menubar con las funciones de generar y descargar -->
+    <div [style]="{ 'margin-top': '1%', 'margin-bottom': '1%' }">
+      <p-menubar [model]="items"></p-menubar>
+    </div>
     <!-- Tabla para visualizar y seleccionar Print Spools -->
-    <p-table [value]="printSpoolArray" [scrollable]="true" scrollHeight="17.5rem" selectionMode="single" [(selection)]="selectedPrintSpool" dataKey="id" styleClass="p-datatable-sm" 
-    [tableStyle]="{'width': '100%'}" [columns]="cols" [paginator]="true" [rows]="6">
-        <ng-template pTemplate="header" let-columns>
-            <tr>
-                <th *ngFor="let col of columns">
-                    {{col.header}}
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-printSpool let-columns="columns">
-            <tr [pSelectableRow]="printSpool" >
-                <td *ngFor="let col of columns">
-                    {{printSpool[col.field]}}
-                </td>
-            </tr>
-        </ng-template>
+    <p-table
+      [value]="printSpoolArray"
+      [scrollable]="true"
+      scrollHeight="17.5rem"
+      selectionMode="single"
+      [(selection)]="selectedPrintSpool"
+      dataKey="id"
+      styleClass="p-datatable-sm"
+      [tableStyle]="{ width: '100%' }"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="6"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{ col.header }}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-printSpool let-columns="columns">
+        <tr [pSelectableRow]="printSpool">
+          <td *ngFor="let col of columns">
+            {{ printSpool[col.field] }}
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
-</div>
-<!-- Modal con el form para generar un nuevo Print Spool -->
-<p-dialog header="New print spool" [(visible)]="displaySpoolDialog" [modal]="true">
+  </div>
+  <!-- Modal con el form para generar un nuevo Print Spool -->
+  <p-dialog
+    header="New print spool"
+    [(visible)]="displaySpoolDialog"
+    [modal]="true"
+  >
     <div>
-        <div [style]="{'margin-top':'5%', 'margin-bottom':'5%'}">
-            <p-dropdown [options]="periods" [(ngModel)]="spoolConfig.date" optionLabel=""></p-dropdown>
+      <div [style]="{ 'margin-top': '5%', 'margin-bottom': '5%' }">
+        <p-dropdown
+          [options]="periods"
+          [(ngModel)]="spoolConfig.date"
+          optionLabel=""
+        ></p-dropdown>
+      </div>
+      <div [style]="{ 'margin-top': '5%', 'margin-bottom': '5%' }">
+        <p-checkbox
+          name="stratum"
+          id="stratum"
+          for="stratum"
+          label="Stratum"
+          [(ngModel)]="spoolConfig.stratum"
+          [binary]="true"
+        ></p-checkbox>
+      </div>
+      <div [style]="{ 'margin-top': '5%', 'margin-bottom': '5%' }">
+        <p-checkbox
+          name="avgConsumption"
+          id="avgConsumption"
+          for="avgConsumption"
+          label="Average consumption"
+          [(ngModel)]="spoolConfig.avgConsumption"
+          [binary]="true"
+        ></p-checkbox>
+      </div>
+      <div [style]="{ 'margin-top': '5%', 'margin-bottom': '5%' }">
+        <p-checkbox
+          name="lastConsumption"
+          id="lastConsumption"
+          for="lastConsumption"
+          label="Last consumptions"
+          [(ngModel)]="spoolConfig.lastConsumption"
+          [binary]="true"
+        ></p-checkbox>
+      </div>
+      <div
+        class="ui-g-12"
+        [style]="{ 'margin-top': '5%', 'margin-bottom': '5%' }"
+      >
+        <div class="ui-g-4">
+          <label for="nConsumptions">Number of consumptions</label>
         </div>
-        <div [style]="{'margin-top':'5%', 'margin-bottom':'5%'}">
-            <p-checkbox name="stratum" id="stratum" for="stratum" label="Stratum" [(ngModel)]="spoolConfig.stratum" [binary]="true"></p-checkbox>
+        <div class="ui-g-8">
+          <p-inputNumber
+            [min]="1"
+            [max]="12"
+            id="nConsumptions"
+            [(ngModel)]="spoolConfig.nconsumptions"
+          ></p-inputNumber>
         </div>
-        <div [style]="{'margin-top':'5%', 'margin-bottom':'5%'}">
-            <p-checkbox name="avgConsumption" id="avgConsumption" for="avgConsumption" label="Average consumption" [(ngModel)]="spoolConfig.avgConsumption" [binary]="true"></p-checkbox>
-        </div>
-        <div [style]="{'margin-top':'5%', 'margin-bottom':'5%'}">
-            <p-checkbox name="lastConsumption" id="lastConsumption" for="lastConsumption" label="Last consumptions" [(ngModel)]="spoolConfig.lastConsumption" [binary]="true"></p-checkbox>
-        </div>
-        <div class="ui-g-12" [style]="{'margin-top':'5%', 'margin-bottom':'5%'}">
-            <div class="ui-g-4">
-                <label for="nConsumptions">Number of consumptions</label>
-            </div>
-            <div class="ui-g-8">
-                <p-inputNumber [min]="1" [max]="12" id="nConsumptions" [(ngModel)]="spoolConfig.nconsumptions"></p-inputNumber>
-            </div>
-        </div>
+      </div>
     </div>
     <p-footer>
-        <div class="ui-dialog-buttonpane ui-helper-clearfix">
-            <button #generateButton type="button" pButton class="p-button-danger" icon="pi pi-file" (click)="generatePrintSpool(generateButton)" label="Generate"></button>
-        </div>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <button
+          #generateButton
+          type="button"
+          pButton
+          class="p-button-danger"
+          icon="pi pi-file"
+          (click)="generatePrintSpool(generateButton)"
+          label="Generate"
+        ></button>
+      </div>
     </p-footer>
-</p-dialog>
+  </p-dialog>
 </div>
