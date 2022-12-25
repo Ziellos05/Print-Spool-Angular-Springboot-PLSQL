@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import in.printspool.repository.BillsRepository;
+import in.printspool.repository.service.BillsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 public class BillsController {
 
 	@Autowired
-	private BillsRepository eDAO;
+	private BillsService billsService;
 
 	/*
 	 * El siguiente método genera la facturación para el mes en curso, su función es
@@ -40,7 +40,7 @@ public class BillsController {
 	@GetMapping()
 	private ResponseEntity<String> saveBills() {
 		try {
-			eDAO.save();
+			billsService.save();
 			return ResponseEntity.ok("Bills have been updated for the current month till this moment");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

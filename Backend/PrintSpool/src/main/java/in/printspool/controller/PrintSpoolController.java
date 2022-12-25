@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import in.printspool.model.PrintSpool;
 import in.printspool.model.PrintSpoolCsv;
 import in.printspool.model.SpoolConfig;
-import in.printspool.repository.PrintSpoolRepository;
+import in.printspool.repository.service.PrintSpoolService;
 import in.printspool.util.PrintSpoolUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -39,15 +39,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-// CONTROLLER PARA LA GENERACIÓN DEL PRINT SPOOL
+//CONTROLLER PARA LA GENERACIÓN DEL PRINT SPOOL
 @RestController
 @RequestMapping(value = "/spool")
 @Tag(name = "PrintSpool", description = "Dinamic Print Spool generator")
 @CrossOrigin({ "*" })
 public class PrintSpoolController {
 
+	
 	@Autowired
-	private PrintSpoolRepository printSpoolRepository;
+	private PrintSpoolService printSpoolService;
 
 	/*
 	 * El siguiente método genera dinámicamente el print spool a recibir en formato
@@ -79,147 +80,37 @@ public class PrintSpoolController {
 			}
 			// Retorna todos los campos
 			if (spoolConfig.isStratum() && spoolConfig.isAvgConsumption() && spoolConfig.isLastConsumption()) {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSAL(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "S-A-L-" + spoolConfig.getNConsumptions();
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolSAL(spoolConfig),
 						HttpStatus.OK);
 				// No retorna los últimos consumos
 			} else if (spoolConfig.isStratum() && spoolConfig.isAvgConsumption()) {
 
-				/* Llamado a la base de datos para obtener el print spool */
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSA(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-
-				/*
-				 * Transformación de la data al formato JsonNode para poder editar y quitar los
-				 * campos que no se requieran en la respuesta
-				 */
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("last");
-					}
-				}
-
-				/*
-				 * Generación del .JSON, .CSV y agregado de la información a la tabla que hace
-				 * seguimiento a los archivos creados
-				 */
-
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-
-				/* Retorna objeto con la info para acceder al archivo y poder "descargarlo" */
-
-				String code = "S-A-" + spoolConfig.getNConsumptions();
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolSA(spoolConfig),
 						HttpStatus.OK);
 
 				// No retorna el promedio
 			} else if (spoolConfig.isStratum() && spoolConfig.isLastConsumption()) {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolSL(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("avgConsumption");
-					}
-				}
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "S-L-" + spoolConfig.getNConsumptions();
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolSL(spoolConfig),
 						HttpStatus.OK);
 				// No retorna el estrato
 			} else if (spoolConfig.isAvgConsumption() && spoolConfig.isLastConsumption()) {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolAL(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("stratum");
-					}
-				}
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "A-L-" + spoolConfig.getNConsumptions();
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolAL(spoolConfig),
 						HttpStatus.OK);
 				// No retorna promedio ni últimos consumos
 			} else if (spoolConfig.isStratum()) {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolS(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("avgConsumption");
-						edit.remove("last");
-					}
-				}
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "S";
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolS(spoolConfig),
 						HttpStatus.OK);
 				// No retorna estrato ni últimos consumos
 			} else if (spoolConfig.isAvgConsumption()) {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolA(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("stratum");
-						edit.remove("last");
-					}
-				}
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "A-" + spoolConfig.getNConsumptions();
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolA(spoolConfig),
 						HttpStatus.OK);
 				// No retorna estrato ni promedio
 			} else if (spoolConfig.isLastConsumption()) {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpoolL(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("avgConsumption");
-						edit.remove("stratum");
-					}
-				}
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "L-" + spoolConfig.getNConsumptions();
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpoolL(spoolConfig),
 						HttpStatus.OK);
 				// No retorna estrato, promedio ni último consumo
 			} else {
-				List<PrintSpool> printSpool = printSpoolRepository.getPrintSpool(spoolConfig);
-				PrintSpoolUtil util = new PrintSpoolUtil();
-				JsonNode root = util.jsonNodeGenerator(printSpool);
-				for (JsonNode jsonNode : root) {
-					if (jsonNode instanceof ObjectNode) {
-						ObjectNode edit = (ObjectNode) jsonNode;
-						edit.remove("stratum");
-						edit.remove("avgConsumption");
-						edit.remove("last");
-					}
-				}
-				List<String> csvList = util.csvGenerator(root, spoolConfig.getDate());
-				String code = "NOT";
-				return new ResponseEntity<PrintSpoolCsv>(printSpoolRepository
-						.printSpoolCsv(csvList.get(0), csvList.get(1), spoolConfig.getDate(), code).get(0),
+				return new ResponseEntity<PrintSpoolCsv>(printSpoolService.getPrintSpool(spoolConfig),
 						HttpStatus.OK);
 			}
 		} catch (Exception e) {
@@ -235,7 +126,7 @@ public class PrintSpoolController {
 	@GetMapping
 	private ResponseEntity<List<PrintSpoolCsv>> getPrintSpoolCsv() throws Exception {
 		try {
-			return ResponseEntity.ok(printSpoolRepository.getPrintSpoolCsv());
+			return ResponseEntity.ok(printSpoolService.getPrintSpoolCsv());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
