@@ -22,7 +22,7 @@ Ahora lo que debe hacer es abrir y lanzar el archivo ../DB/APP_DATOS_IMPRESION.s
 
 3. Montaje del Backend
 
-- Utilizando Spring Tools Suite 4, el primer paso es abrir el proyecto con la opción File > Open Project From File System, luego da click en la opción "Show other specialized import wizards" y utiliza la opción Gradle Project, en caso de exportar por segunda ocasión el proyecto, es necesario eliminar la exportación anterior o modificar el nombre del proyecto en la sección settings.gradle.
+- Utilizando Spring Tools Suite 4, el primer paso es abrir el proyecto con la opción File > Open Project From File System, luego da click en la opción "Show other specialized import wizards" y utiliza la opción Gradle Project, la versión de Gradle es 7.5.1. En caso de exportar por segunda ocasión el proyecto, es necesario eliminar la exportación anterior o modificar el nombre del proyecto en la sección settings.gradle.
 
 - El segundo paso es actualizar el proyecto para que se instalen las dependencias necesarias haciendo click derecho sobre la carpeta raiz del proyecto y seleccionando la opción Gradle > Refresh Gradle Project.
 
