@@ -1,5 +1,7 @@
 # Print Spool Mananger APP
 
+(NINGÚN DATO CONTENIDO EN ESTE REPOSITORIO ES SENSIBLE, NI PERTENECE A USUARIOS REALES NI AFECTA DE NINGUNA MANERA LOS INTERESES DE NINGUNA COMPAÑÍA, EL APLICATIVO TIENE COMO PRIMORDIAL INTERÉS DOCUMENTAR UN DESARROLLO EN EL STACK ANGULAR/SPRINGBOOT/PLSQL ENFOCADO EN EL APRENDIZAJE DE LAS TECNOLOGÍAS EN CUESTIÓN).
+
 Esta aplicación administra la generación del spool de impresión para la facturación periódica de una empresa prestadora del servicio de acueducto, este readme pretende explicar el paso a paso en orden para poder lanzar y probar la aplicación. Todas las rutas a comentar van a hacerse desde una ruta relativa que es la carpeta principal que contiene 4 carpetas, el Frontend, el Backend, la BD y una carpeta con archivos para probar la subida.
 
 1. IDEs recomendados 
@@ -53,4 +55,4 @@ El Frontend es por mucho el desarrollo con menos inconvenientes para lanzar, en 
 
 En el mejor de los casos, en este momento Frontend estará conectando con el Backend y a su vez este último realizando peticiones a la base de datos para que usted pueda probar el aplicativo correctamente. Enjoy it!
 
-En el peor de los casos, por favor contactarse conmigo. Correo: roland.ortega@segurosbolivar.con, wa: 3167178288, o escribir por Slack.
+En el peor de los casos, por favor contactarse conmigo. Correo: rolandandresortega@gmail.com o wa: 3167178288.
